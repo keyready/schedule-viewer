@@ -9,10 +9,12 @@ import { AxiosInstance } from 'axios';
 import { UISchema } from 'features/UI';
 import { rtkApi } from 'shared/api/rtkApi';
 import { SubjectSchema } from 'entities/Subject';
+import { SidebarSchema } from 'widgets/Sidebar';
 
 export interface StateSchema {
     ui: UISchema;
     subject: SubjectSchema;
+    sidebar: SidebarSchema;
     [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
     // asynchronous reducers
