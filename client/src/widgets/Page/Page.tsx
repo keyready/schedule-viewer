@@ -18,8 +18,10 @@ interface PageProps {
 export const Page = memo((props: PageProps) => {
     const { className, children, onScrollEnd } = props;
     const dispatch = useAppDispatch();
-    const { pathname } = useLocation();
-    const scrollPosition = useSelector((state: StateSchema) => getUIScrollByPath(state, pathname));
+    const { pathname, search } = useLocation();
+    const scrollPosition = useSelector((state: StateSchema) =>
+        getUIScrollByPath(state, pathname + search),
+    );
 
     const wrapperRef = useRef() as MutableRefObject<HTMLDivElement>;
     const triggerRef = useRef() as MutableRefObject<HTMLDivElement>;
@@ -35,10 +37,9 @@ export const Page = memo((props: PageProps) => {
     }, [scrollPosition]);
 
     const onScroll = useThrottle((e: UIEvent<HTMLDivElement>) => {
-        console.warn('SCROLL');
         dispatch(
             UIActions.setScrollPosition({
-                path: pathname,
+                path: pathname + search,
                 position: e.currentTarget.scrollTop,
             }),
         );

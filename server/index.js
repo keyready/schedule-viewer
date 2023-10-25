@@ -30,12 +30,12 @@ app.post("/api/subjects", (req, res) => {
   return res.status(200).json({ subjects });
 });
 
-app.post("/get_schedule", (req, res) => {
-  const { group } = req.body;
+app.get("/api/schedule", (req, res) => {
+  const { workDir, group } = req.query;
 
-  const schedule = getRectangleFromExcel(`../files/${group}.xlsx`, "D6:W34");
+  const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, "D6:W34");
 
-  return res.status(200).json({ schedule });
+  return res.status(200).json(schedule);
 });
 
 app.listen(5000);
