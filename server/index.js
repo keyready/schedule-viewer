@@ -53,4 +53,3 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
 
 
 console.log(getRectangleFromExcel('../files/611-2.xlsx', 'D6:Z34'));
-// getRectangleFromExcel('../files/611-11.xlsx', 'D6:U10')
