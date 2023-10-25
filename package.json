@@ -1,0 +1,16 @@
+{
+  "name": "schedule-viewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "init": "npm i concurrently && concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm run init\" \"cd ./server && npm run init\"",
+    "start": "concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm start\" \"cd ./server && npm start\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

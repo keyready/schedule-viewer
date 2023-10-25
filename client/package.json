@@ -4,7 +4,7 @@
     "description": "Просмотр расписаний факультета",
     "main": "index.js",
     "scripts": {
-        "start": "webpack serve --env port=3000 apiUrl=http://localhost:5000",
+        "start": "webpack serve --env port=3000 apiUrl=http://localhost:5000/",
         "build": "webpack --env mode=production apiUrl=http://localhost:5000/",
         "init": "npm install --force",
         "lint:project": "concurrently -n Prettier,ESlint,Stylelint -c blue,yellow,green \"npm run prettier\" \"npm run lint:ts\" \"npm run lint:scss\"",

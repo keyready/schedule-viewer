@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const { getRectangleFromExcel, getRange } = require("./parser");
+const { getRectangleFromExcel, getRange } = require("./utils/parser");
 const app = express();
 const cors = require("cors");
 
