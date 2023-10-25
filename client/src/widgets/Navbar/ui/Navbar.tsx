@@ -9,6 +9,8 @@ export interface NavbarProps {
 
 export const Navbar = memo(({ className }: NavbarProps) => (
     <HStack maxW align="center" className={classNames(classes.Navbar, {}, [className])}>
-        <HStack maxW justify="center" className={classes.links} />
+        <HStack maxW justify="center">
+            <h2>Расписание занятий курсантов 6 факультета</h2>
+        </HStack>
     </HStack>
 ));

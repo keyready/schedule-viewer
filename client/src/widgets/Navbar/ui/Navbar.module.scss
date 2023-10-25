@@ -3,8 +3,6 @@
     height: var(--navbar-heigth);
     padding: 20px;
     background: var(--inverted-bg-color);
-}
-
-.submitButton {
-    align-self: end;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }

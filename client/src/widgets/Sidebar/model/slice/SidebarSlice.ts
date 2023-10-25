@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SidebarSchema } from '../types/SidebarTypes';
 
 const initialState: SidebarSchema = {
-    data: { isCollapsed: false },
+    data: { isCollapsed: true },
 };
 
 export const SidebarSlice = createSlice({

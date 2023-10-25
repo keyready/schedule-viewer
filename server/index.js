@@ -8,14 +8,14 @@ const cors = require("cors");
 app.use(express.json());
 app.use(cors());
 
-app.post("/get_groups", (req, res) => {
-  const { dir } = req.body;
+app.get("/api/groups", (req, res) => {
+  const { dir } = req.query;
 
   try {
     const files = fs.readdirSync(dir);
-    const filenames = files.map((file) => path.basename(file).split(".")[0]);
+    const title = files.map((file) => path.basename(file).split(".")[0]);
 
-    return res.status(200).json({ filenames });
+    return res.status(200).json(title);
   } catch (e) {
     console.log("ошибка", e);
     return res.status(500).json({ message: "Директория не найдена" });
