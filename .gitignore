@@ -1,2 +1,5 @@
 /server/node_modules
 /files/~$611-11.xlsx
+
+/client/node_modules
+/.idea

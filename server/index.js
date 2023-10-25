@@ -1,9 +1,5 @@
 const XLSX = require('xlsx');
 
-const currentMonth = ['сентября', 'октября', 'ноября', 'декабря', 'января']
-let cnt = 0;
-let dec = 45169;
-
 function getRectangleFromExcel(fileName, rectangleVertices) {
     const workbook = XLSX.readFile(fileName);
 
@@ -32,20 +28,22 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
         str.push([]);
         column.map((cell) => {
             if (/^\d+$/.test(cell)) {
-                str[index].push(new Date(
+                str[index].push('             ' + new Date(
                     (cell - (25567 + 2)) * 86400 * 1000
                 ).toLocaleString('ru-RU', {
                     day: '2-digit',
                     month: '2-digit',
                     year: '2-digit'
-                }))
+                }) + '             ')
             } else if (!cell?.length) {
-                str[index].push('Сампо')
+                str[index].push(`Тип занятия: самоподготовка, аудитория: 314-6`)
             } else if (cell.includes('\r\n')) {
                 const row = cell.split('\r\n');
                 str[index].push(
                     `Тип занятия: ${row[0]}, дисциплина: ${row[1]}, аудитория: ${row[2]}`
                 );
+            } else if (/[А-ЯЁёа-я]/.test(cell)) {
+                str[index].push('                ' + cell + '                ');
             }
         });
     });
@@ -54,5 +52,5 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
 }
 
 
-console.log(getRectangleFromExcel('../files/611-11.xlsx', 'F6:U34'));
+console.log(getRectangleFromExcel('../files/611-2.xlsx', 'D6:Z34'));
 // getRectangleFromExcel('../files/611-11.xlsx', 'D6:U10')
