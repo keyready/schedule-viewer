@@ -1,4 +1,3 @@
-import { UserSchema } from 'entities/User';
 import {
     AnyAction,
     CombinedState,
@@ -9,10 +8,11 @@ import {
 import { AxiosInstance } from 'axios';
 import { UISchema } from 'features/UI';
 import { rtkApi } from 'shared/api/rtkApi';
+import { SubjectSchema } from 'entities/Subject';
 
 export interface StateSchema {
-    user: UserSchema;
     ui: UISchema;
+    subject: SubjectSchema;
     [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
     // asynchronous reducers
