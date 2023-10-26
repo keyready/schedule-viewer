@@ -1,0 +1,12 @@
+.GroupCard {
+    cursor: pointer;
+    padding: 7px 15px;
+    border-radius: 5px;
+    background: var(--inverted-bg-color);
+    transition: 100ms ease-out;
+    text-align: center;
+
+    &:hover {
+        transform: scale(1.07);
+    }
+}

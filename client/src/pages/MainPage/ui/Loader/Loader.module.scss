@@ -1,0 +1,8 @@
+.groupsWrapper {
+    display: grid;
+    align-items: stretch;
+    margin-top: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    justify-items: stretch;
+}

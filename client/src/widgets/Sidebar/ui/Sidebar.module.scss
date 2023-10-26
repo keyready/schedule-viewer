@@ -1,0 +1,9 @@
+.Sidebar {
+    width: 33%;
+    background: var(--inverted-bg-color);
+    transition: 200ms ease-in-out;
+}
+
+.collapsed {
+    width: 10%;
+}

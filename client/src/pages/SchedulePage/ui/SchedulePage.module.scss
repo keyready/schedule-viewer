@@ -1,0 +1,6 @@
+.phone {
+    &:link, &:visited {
+        color: var(--card-bg);
+        text-decoration: none;
+    }
+}

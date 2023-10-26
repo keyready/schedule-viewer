@@ -3,6 +3,8 @@ import { $api } from 'shared/api/api';
 import { UIReducer } from 'features/UI';
 import { rtkApi } from 'shared/api/rtkApi';
 import { SubjectReducer } from 'entities/Subject';
+import { SidebarReducer } from 'widgets/Sidebar';
+import { GroupReducer } from 'entities/Group';
 import { createReducerManager } from './reducerManager';
 import { StateSchema } from './StateSchema';
 
@@ -14,6 +16,8 @@ export function CreateReduxStore(
         ...lazyReducers,
         ui: UIReducer,
         subject: SubjectReducer,
+        sidebar: SidebarReducer,
+        group: GroupReducer,
         [rtkApi.reducerPath]: rtkApi.reducer,
     };
 

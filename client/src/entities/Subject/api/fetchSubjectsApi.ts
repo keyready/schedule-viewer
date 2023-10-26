@@ -3,7 +3,7 @@ import { Subject } from 'entities/Subject';
 
 const fetchSubjectApi = rtkApi.injectEndpoints({
     endpoints: (build) => ({
-        getSubjects: build.query<Subject[], number>({
+        getSubjects: build.query<Subject[], string>({
             query: (group) => ({
                 url: '/api/subjects',
                 params: {
