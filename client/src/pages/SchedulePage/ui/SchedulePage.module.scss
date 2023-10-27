@@ -4,3 +4,17 @@
         text-decoration: none;
     }
 }
+
+.title {
+    font-size: 36px;
+    font-weight: bold;
+    align-self: center;
+    margin-bottom: 20px;
+}
+
+.grid {
+    display: grid;
+    margin-top: 20px;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 15px;
+}

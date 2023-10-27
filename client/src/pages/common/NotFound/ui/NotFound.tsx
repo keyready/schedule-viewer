@@ -13,6 +13,10 @@ export const NotFound = ({ className }: NotFoundProps) => {
     }, []);
 
     return (
-        <Page className={classNames(classes.NotFound, {}, [className])}>Страница не найдена</Page>
+        <Page
+            className={classNames(classes.NotFound, {}, [className])}
+        >
+            Страница не найдена
+        </Page>
     );
 };

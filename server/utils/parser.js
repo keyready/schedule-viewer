@@ -42,7 +42,7 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
         result[realIndex].date = date;
       } else if (!cell?.length) {
         result[realIndex].jobs.push(
-          `Тип занятия: самоподготовка, аудитория: 314-6`
+          `Тип занятия: самоподготовка, дисциплина: самоподготовка, аудитория: 314-6`
         );
       } else if (cell.includes("\r\n")) {
         const row = cell.split("\r\n");
@@ -55,7 +55,9 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
 
       if (date.getDay() === 6) {
         if (result[realIndex].jobs.length >= 3) {
-          result[realIndex].jobs.push("Хозяйственный день");
+          result[realIndex].jobs.push(
+            "Тип занятия: хозяйственный день, дисциплина: хозяйственный день, аудитория: Каз.63"
+          );
           realIndex += 1;
         }
       } else if (result[realIndex].jobs.length >= 4) realIndex += 1;
@@ -105,6 +107,7 @@ function getRange(fileName, rectangleVertices) {
       abbr: clearData[0][i],
       title: clearData[1][i],
       kaf: ~~clearData[2][i],
+      prepod: clearData[3][i],
     });
   }
 

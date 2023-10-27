@@ -8,7 +8,9 @@ import { ErrorBoundary } from 'app/providers/ErrorBoundary';
 
 const container = document.getElementById('root');
 if (!container) {
-    throw new Error('Контейнер root не найден. Не удалось вмонтировать приложение');
+    throw new Error(
+        'Контейнер root не найден. Не удалось вмонтировать приложение',
+    );
 }
 
 const root = createRoot(container);

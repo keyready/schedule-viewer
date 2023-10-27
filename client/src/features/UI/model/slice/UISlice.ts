@@ -11,7 +11,9 @@ export const UISlice = createSlice({
     reducers: {
         setScrollPosition: (
             state,
-            { payload }: PayloadAction<{ path: string; position: number }>,
+            {
+                payload,
+            }: PayloadAction<{ path: string; position: number }>,
         ) => {
             state.scroll[payload.path] = payload.position;
         },

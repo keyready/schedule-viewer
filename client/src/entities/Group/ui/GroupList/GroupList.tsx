@@ -28,8 +28,11 @@ export const GroupList = memo((props: GroupListProps) => {
     }
 
     return (
-        <div className={classNames(classes.GroupList, {}, [className])}>
-            {groups?.length && groups.map((group) => <GroupCard group={group} />)}
+        <div
+            className={classNames(classes.GroupList, {}, [className])}
+        >
+            {groups?.length &&
+                groups.map((group) => <GroupCard group={group} />)}
         </div>
     );
 });

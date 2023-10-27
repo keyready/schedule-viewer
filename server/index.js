@@ -22,12 +22,12 @@ app.get("/api/groups", (req, res) => {
   }
 });
 
-app.post("/api/subjects", (req, res) => {
-  const { group } = req.body;
+app.get("/api/subjects", (req, res) => {
+  const { group } = req.query;
 
-  const subjects = getRange(`../files/${group}.xlsx`, "A39:I50");
+  const subjects = getRange(`../files/${group}.xlsx`, "A39:O50");
 
-  return res.status(200).json({ subjects });
+  return res.status(200).json(subjects);
 });
 
 app.get("/api/schedule", (req, res) => {

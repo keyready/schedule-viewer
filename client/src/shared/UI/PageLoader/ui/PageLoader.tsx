@@ -7,7 +7,9 @@ interface PageLoaderProps {
     className?: string;
 }
 
-export const PageLoader: FC<PageLoaderProps> = ({ className }: PageLoaderProps) => (
+export const PageLoader: FC<PageLoaderProps> = ({
+    className,
+}: PageLoaderProps) => (
     <div className={classNames(classes.PageLoader, {}, [className])}>
         <Loader />
     </div>

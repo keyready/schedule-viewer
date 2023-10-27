@@ -1,6 +1,10 @@
 import { useContext } from 'react';
 import Cookie from 'js-cookie';
-import { LOCAL_STORAGE_THEME, Theme, ThemeContext } from './ThemeContext';
+import {
+    LOCAL_STORAGE_THEME,
+    Theme,
+    ThemeContext,
+} from './ThemeContext';
 
 export interface UseThemeResult {
     theme: Theme;

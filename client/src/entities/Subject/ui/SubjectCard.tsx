@@ -9,5 +9,13 @@ interface SubjectCardProps {
 export const SubjectCard = memo((props: SubjectCardProps) => {
     const { className } = props;
 
-    return <div className={classNames(classes.SubjectCard, {}, [className])}>ghbdtn vbh</div>;
+    return (
+        <div
+            className={classNames(classes.SubjectCard, {}, [
+                className,
+            ])}
+        >
+            ghbdtn vbh
+        </div>
+    );
 });

@@ -16,7 +16,9 @@ export const GroupCard = memo((props: GroupCardProps) => {
 
     return (
         <div
-            onClick={() => navigate(`${RoutePath.schedule}?group=${group}`)}
+            onClick={() =>
+                navigate(`${RoutePath.schedule}?group=${group}`)
+            }
             className={classNames(classes.GroupCard, {}, [className])}
         >
             <p>

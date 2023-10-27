@@ -1,7 +1,17 @@
 // Урок 35
 
-import { AnyAction, combineReducers, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
-import { MountedReducers, reducerManager, StateSchema, StateSchemaKey } from './StateSchema';
+import {
+    AnyAction,
+    combineReducers,
+    Reducer,
+    ReducersMapObject,
+} from '@reduxjs/toolkit';
+import {
+    MountedReducers,
+    reducerManager,
+    StateSchema,
+    StateSchemaKey,
+} from './StateSchema';
 
 export function createReducerManager(
     initialReducers: ReducersMapObject<StateSchema>,

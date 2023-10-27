@@ -1,4 +1,9 @@
-import React, { InputHTMLAttributes, memo, useEffect, useRef } from 'react';
+import React, {
+    InputHTMLAttributes,
+    memo,
+    useEffect,
+    useRef,
+} from 'react';
 import classes from './Input.module.scss';
 
 type HTMLInputProps = Omit<
@@ -16,7 +21,14 @@ interface InputProps extends HTMLInputProps {
 
 export const Input = memo((props: InputProps) => {
     const ref = useRef<HTMLInputElement>(null);
-    const { value, onChange, type = 'text', autoFocus, readonly, ...otherProps } = props;
+    const {
+        value,
+        onChange,
+        type = 'text',
+        autoFocus,
+        readonly,
+        ...otherProps
+    } = props;
 
     useEffect(() => {
         if (autoFocus) {
@@ -24,7 +36,9 @@ export const Input = memo((props: InputProps) => {
         }
     }, [autoFocus]);
 
-    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeHandler = (
+        e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
         onChange?.(e.target.value);
     };
 

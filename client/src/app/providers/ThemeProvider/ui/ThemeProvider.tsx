@@ -1,8 +1,13 @@
 import { ReactNode, useMemo, useState } from 'react';
 import Cookie from 'js-cookie';
-import { LOCAL_STORAGE_THEME, Theme, ThemeContext } from '../lib/ThemeContext';
+import {
+    LOCAL_STORAGE_THEME,
+    Theme,
+    ThemeContext,
+} from '../lib/ThemeContext';
 
-const defaultTheme = (Cookie.get(LOCAL_STORAGE_THEME) as Theme) || Theme.LIGHT;
+const defaultTheme =
+    (Cookie.get(LOCAL_STORAGE_THEME) as Theme) || Theme.LIGHT;
 
 export interface ThemeProviderProps {
     children: ReactNode;
@@ -12,7 +17,9 @@ export interface ThemeProviderProps {
 const ThemeProvider = (props: ThemeProviderProps) => {
     const { initialTheme, children } = props;
 
-    const [theme, setTheme] = useState<Theme>(initialTheme || defaultTheme);
+    const [theme, setTheme] = useState<Theme>(
+        initialTheme || defaultTheme,
+    );
 
     const defaultProps = useMemo(
         () => ({
@@ -22,7 +29,11 @@ const ThemeProvider = (props: ThemeProviderProps) => {
         [theme],
     );
 
-    return <ThemeContext.Provider value={defaultProps}>{children}</ThemeContext.Provider>;
+    return (
+        <ThemeContext.Provider value={defaultProps}>
+            {children}
+        </ThemeContext.Provider>
+    );
 };
 
 export default ThemeProvider;

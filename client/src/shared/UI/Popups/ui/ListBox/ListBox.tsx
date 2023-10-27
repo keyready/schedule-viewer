@@ -25,14 +25,23 @@ interface ListBoxProps {
 }
 
 export const ListBox = (props: ListBoxProps) => {
-    const { className, items, defaultValue, value, onChange, direction = 'bottom left' } = props;
+    const {
+        className,
+        items,
+        defaultValue,
+        value,
+        onChange,
+        direction = 'bottom left',
+    } = props;
 
     const directionsClasses = [directionsMapper[direction]];
 
     return (
         <HListBox
             as="div"
-            className={classNames(popupClasses.popup, {}, [className])}
+            className={classNames(popupClasses.popup, {}, [
+                className,
+            ])}
             value={value}
             onChange={onChange}
         >
@@ -44,7 +53,13 @@ export const ListBox = (props: ListBoxProps) => {
                     </HStack>
                 </Button>
             </HListBox.Button>
-            <HListBox.Options className={classNames(classes.options, {}, directionsClasses)}>
+            <HListBox.Options
+                className={classNames(
+                    classes.options,
+                    {},
+                    directionsClasses,
+                )}
+            >
                 {items.map((item) => (
                     <HListBox.Option
                         key={item.value}
@@ -59,13 +74,18 @@ export const ListBox = (props: ListBoxProps) => {
                                     {
                                         [popupClasses.active]: active,
                                         [classes.selected]: selected,
-                                        [popupClasses.disabled]: disabled,
+                                        [popupClasses.disabled]:
+                                            disabled,
                                     },
                                     [],
                                 )}
                             >
                                 <HStack gap="4" justify="start">
-                                    {active && <ExpandIcon className={classes.icon} />}
+                                    {active && (
+                                        <ExpandIcon
+                                            className={classes.icon}
+                                        />
+                                    )}
                                     {item.content}
                                 </HStack>
                             </li>

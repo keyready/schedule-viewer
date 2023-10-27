@@ -14,11 +14,14 @@ module.exports = {
     },
     plugins: ['react', '@typescript-eslint', 'react-hooks'],
     rules: {
-        'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.tsx'] }],
+        'react/jsx-filename-extension': [
+            2,
+            { extensions: ['.js', '.jsx', '.tsx'] },
+        ],
         'max-len': ['error', { ignoreComments: true, code: 100 }],
         'react-hooks/exhaustive-deps': 'error',
         'react-hooks/rules-of-hooks': 'error',
-        'react/jsx-max-props-per-line': [`error`, { maximum: 5 }],
+        'react/jsx-max-props-per-line': [`error`, { maximum: 3 }],
         'jsx-a11y/no-static-element-interactions': 'off',
         'jsx-a11y/label-has-associated-control': 'off',
         'jsx-a11y/click-events-have-key-events': 'off',
@@ -33,7 +36,10 @@ module.exports = {
         'no-underscore-dangle': 'off',
         'import/no-unresolved': 'off',
         'no-param-reassign': 'off',
-        '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-unused-vars': [
+            'warn',
+            { argsIgnorePattern: '^_' },
+        ],
         'import/extensions': 'off',
         'no-shadow': 'off',
         'no-undef': 'off',

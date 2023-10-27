@@ -24,8 +24,9 @@ export function CreateReduxStore(
     const reducerManager = createReducerManager(rootReducers);
 
     const store = configureStore({
-        // @ts-ignore
-        reducer: reducerManager.reduce as ReducersMapObject<StateSchema>,
+        reducer:
+            // @ts-ignore
+            reducerManager.reduce as ReducersMapObject<StateSchema>,
         devTools: IS_DEV,
         preloadedState: initialState,
         middleware: (getDefaultMiddleware) =>
@@ -44,4 +45,6 @@ export function CreateReduxStore(
     return store;
 }
 
-export type AppDispatch = ReturnType<typeof CreateReduxStore>['dispatch'];
+export type AppDispatch = ReturnType<
+    typeof CreateReduxStore
+>['dispatch'];

@@ -10,10 +10,14 @@ export interface NavbarProps {
 }
 
 export const Navbar = memo(({ className }: NavbarProps) => (
-    <HStack maxW align="center" className={classNames(classes.Navbar, {}, [className])}>
+    <HStack
+        maxW
+        align="center"
+        className={classNames(classes.Navbar, {}, [className])}
+    >
         <HStack maxW justify="center">
             <AppLink to={RoutePath.main}>
-                <h2>Расписание занятий курсантов 6 факультета</h2>
+                <h2>Расписание занятий 6 факультета</h2>
             </AppLink>
         </HStack>
     </HStack>

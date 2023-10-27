@@ -1,5 +1,17 @@
 .ScheduleDayCard {
-    padding: 15px;
+    padding: 20px 30px;
+    border: 2px solid #000;
     border-radius: 15px;
     background: var(--card-bg);
+}
+
+.title {
+    font-weight: bold;
+    align-self: center;
+}
+
+.discTitle {
+    font-size: 16px;
+    align-self: center;
+    text-align: center;
 }
