@@ -16,7 +16,7 @@ export const FetchGroupsForm = memo((props: FetchGroupsFormProps) => {
     const [directory, setDirectory] = useState<string>('');
 
     useEffect(() => {
-        const cookieDirectory = Cookie.get('scheduleDir');
+        const cookieDirectory = Cookie.get('workDir');
         if (cookieDirectory) {
             setScheduleDir(cookieDirectory);
             setDirectory(cookieDirectory);
@@ -27,7 +27,7 @@ export const FetchGroupsForm = memo((props: FetchGroupsFormProps) => {
         (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             setScheduleDir(directory);
-            Cookie.set('scheduleDir', directory);
+            Cookie.set('workDir', directory);
         },
         [directory, setScheduleDir],
     );
