@@ -22,5 +22,5 @@ ___
 4. Выбрав группу, Вы попадете на страницу просмотра расписания, где можно подробно посмотреть информацию о любом учебном дне
 
 ___
- - developed by **[Корчак Родион](http://t.me/keyrea_dy)**
- - designed by **[Дмитрий Поляков](http://t.me/operculum)**
+- developed by **[Корчак Родион](http://t.me/keyrea_dy)**
+- designed by **[Дмитрий Поляков](http://t.me/operculum)**
