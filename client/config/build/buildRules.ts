@@ -3,7 +3,9 @@ import { BuildOptions } from './config/types';
 import { BuildCssLoader } from './loaders/buildCssLoader';
 import { buildBabelLoader } from './loaders/buildBabelLoader';
 
-export function buildRules(options: BuildOptions): webpack.RuleSetRule[] {
+export function buildRules(
+    options: BuildOptions,
+): webpack.RuleSetRule[] {
     const { isDev } = options;
 
     const svgLoader = {
@@ -11,8 +13,14 @@ export function buildRules(options: BuildOptions): webpack.RuleSetRule[] {
         use: ['@svgr/webpack'],
     };
 
-    const codeBabelLoader = buildBabelLoader({ ...options, isTsx: false });
-    const tsxCodeBabelLoader = buildBabelLoader({ ...options, isTsx: true });
+    const codeBabelLoader = buildBabelLoader({
+        ...options,
+        isTsx: false,
+    });
+    const tsxCodeBabelLoader = buildBabelLoader({
+        ...options,
+        isTsx: true,
+    });
 
     const fileLoader = {
         test: /\.(png|jpe?g|gif)$/i,

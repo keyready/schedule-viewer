@@ -1,16 +1,33 @@
 {
-  "name": "schedule-viewer",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "init": "npm i concurrently && concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm run init\" \"cd ./server && npm run init\"",
-    "start": "concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm start\" \"cd ./server && npm start\""
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
+    "name": "schedule-viewer",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "init": "npm i concurrently && concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm run init\" \"cd ./server && npm run init\"",
+        "start": "concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm start\" \"cd ./server && npm start\"",
+        "start:backend": "concurrently -n SERVER,BOT -c red,blue \"cd ./server && npm start\" \"cd ./bot && npm run dev\"",
+        "lint:project": "concurrently -n Prettier,ESlint,Stylelint -c blue,yellow,green \"npm run prettier\" \"npm run lint:ts\" \"npm run lint:scss\"",
+        "prettier": "npx prettier --write **/*.{js,jsx,ts,tsx}",
+        "lint:ts": "eslint \"**/*.{ts,tsx}\" --fix",
+        "lint:scss": "cd ./client && npx stylelint \"**/*.scss\" --fix"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^8.2.2",
+        "@typescript-eslint/eslint-plugin": "^5.12.1",
+        "@typescript-eslint/parser": "^5.12.1",
+        "eslint": "8.22.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-fsd-path-checker-keyready": "^1.0.0",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-jsx-a11y": "^6.5.1",
+        "eslint-plugin-react": "^7.29.2",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "prettier": "2.8.8",
+        "stylelint-config-prettier": "^9.0.5"
+    }
 }

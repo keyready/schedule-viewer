@@ -6,8 +6,5 @@ export {
     getSubjectError,
     getSubjectIsLoading,
 } from './model/selectors/subjectSelectors';
-export {
-    SubjectActions,
-    SubjectReducer,
-} from './model/slice/SubjectSlice';
+export { SubjectActions, SubjectReducer } from './model/slice/SubjectSlice';
 export { useSubjects } from './api/fetchSubjectsApi';

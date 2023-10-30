@@ -13,13 +13,9 @@ export const PageError = () => {
         <Page className={classes.PageError}>
             <VStack maxH align="center" justify="center">
                 <h1 className={classes.error500}>500</h1>
-                <h1 className={classes.error500Title}>
-                    Внутренная ошибка
-                </h1>
+                <h1 className={classes.error500Title}>Внутренная ошибка</h1>
                 <p>Здесь нет Вашей вины</p>
-                <Button onClick={reloadPage}>
-                    Попробуйте перезагрузить страничку
-                </Button>
+                <Button onClick={reloadPage}>Попробуйте перезагрузить страничку</Button>
             </VStack>
         </Page>
     );

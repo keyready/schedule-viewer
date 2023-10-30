@@ -1,10 +1,5 @@
 import classes from '../ui/Text.module.scss';
-import {
-    HeaderTagType,
-    TextAlign,
-    TextSize,
-    TextVariant,
-} from './Text.types';
+import { HeaderTagType, TextAlign, TextSize, TextVariant } from './Text.types';
 
 export const alignsMapper: Record<TextAlign, string> = {
     center: classes.center,

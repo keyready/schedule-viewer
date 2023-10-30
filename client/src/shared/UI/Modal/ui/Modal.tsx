@@ -38,9 +38,7 @@ export const Modal = (props: ModalProps) => {
                 className={classNames(classes.Modal, {
                     [classes.unclickableModal]: !canOverlayClose,
                 })}
-                onClose={() =>
-                    canOverlayClose ? setIsOpen(false) : {}
-                }
+                onClose={() => (canOverlayClose ? setIsOpen(false) : {})}
             >
                 <Transition.Child
                     as={Fragment}
@@ -64,13 +62,7 @@ export const Modal = (props: ModalProps) => {
                     leaveTo={classes.leaveTo}
                 >
                     <div className={classes.wrapper}>
-                        <Dialog.Panel
-                            className={classNames(
-                                classes.ModalPanel,
-                                {},
-                                [className],
-                            )}
-                        >
+                        <Dialog.Panel className={classNames(classes.ModalPanel, {}, [className])}>
                             {close && (
                                 <Button
                                     className={classes.closeBtn}
@@ -82,25 +74,16 @@ export const Modal = (props: ModalProps) => {
                             )}
                             {title && (
                                 <Dialog.Title>
-                                    <Text
-                                        size="large"
-                                        title={title}
-                                        align={titleAlign}
-                                    />
+                                    <Text size="large" title={title} align={titleAlign} />
                                 </Dialog.Title>
                             )}
                             {description && (
                                 <Dialog.Description>
-                                    <Text
-                                        text={description}
-                                        align={titleAlign}
-                                    />
+                                    <Text text={description} align={titleAlign} />
                                 </Dialog.Description>
                             )}
 
-                            <div className={classes.children}>
-                                {children}
-                            </div>
+                            <div className={classes.children}>{children}</div>
                         </Dialog.Panel>
                     </div>
                 </Transition.Child>

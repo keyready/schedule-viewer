@@ -7,12 +7,8 @@ interface LoaderProps {}
 export const Loader = memo((props: LoaderProps) => (
     <div className={classes.groupsWrapper}>
         {new Array(5).fill(0).map((_, index) => (
-            <Skeleton
-                key={index}
-                width="100%"
-                height="150px"
-                border="10px"
-            />
+            <Skeleton key={index} width="100%" height="150px"
+border="10px" />
         ))}
     </div>
 ));

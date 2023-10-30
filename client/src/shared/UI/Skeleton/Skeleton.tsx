@@ -18,10 +18,5 @@ export const Skeleton = (props: SkeletonProps) => {
         borderRadius: border,
     };
 
-    return (
-        <div
-            className={classNames(classes.Skeleton, {}, [className])}
-            style={styles}
-        />
-    );
+    return <div className={classNames(classes.Skeleton, {}, [className])} style={styles} />;
 };
