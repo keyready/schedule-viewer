@@ -1,15 +1,20 @@
 const { Telegraf, Markup } = require("telegraf");
 const { message } = require("telegraf/filters");
-const { compareStrings } = require("./utils/compareCmd");
 const { generateDocument } = require("./utils/createDoc");
 const path = require("path");
+const { schedule } = require("node-cron");
 
 const bot = new Telegraf("6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY");
 
 const keywords = ["бот", "ботяра", "папочка", "товарищБот"];
-const commands_list = [
-  "расписание",
-  "сделай рапорт на хак. Имена: [имена через запятую]",
+const commands_list = ["расписание", "сделай рапорт на хак"];
+const templates = [
+  "",
+  "Имена: через запятую участники\n" +
+    "Старший: через запятую старшие\n" +
+    "Время начала: строка вида чч:мм дд:мм:гггг\n" +
+    "Время завершения: строка вида чч:мм дд:мм:гггг\n" +
+    "Событие: название_события",
 ];
 
 bot.start(async (ctx) => {
@@ -34,7 +39,11 @@ ${keywords.join(", ")}`);
 
 bot.action("command_list", (ctx) => {
   return ctx.reply(`Вот список команд, которые нужно указать после обращения, чтобы я начал что-то делать: 
-${commands_list.join(", ")}`);
+${commands_list.join(
+  ", "
+)}\n\n\nА вот образец команд, чтобы я понял, что ты от меня хочешь: ${templates.join(
+    "\n"
+  )}`);
 });
 
 bot.action("whatcanido", (ctx) => {
@@ -53,21 +62,28 @@ bot.on(message("text"), (ctx) => {
 
       for (let i = 0; i < commands_list.length; i++) {
         if (sentence.includes(commands_list[i])) {
-          const names = sentence.split("Имена: ")[1].split(", ");
+          const lines = sentence.split("\n");
+          const names = lines[1].split("Имена: ")[1].split(", ");
+          const commander = lines[2].split("Старший: ")[1];
+          const start_time = lines[3].split("Время начала: ")[1];
+          const end_time = lines[4].split("Время завершения: ")[1];
+          const event = lines[5].split("Событие: ")[1];
+          const raport_name =
+            lines[6]?.split("Название файла: ")[1] || `Рапорт на ${event}`;
 
           await generateDocument(
             {
               names,
-              older: "курсанта Полякова Д.С.",
+              commander,
+              start_time,
+              end_time,
+              event,
             },
-            "Желающие проебаться на хаке"
+            raport_name
           );
 
           return await ctx.replyWithDocument({
-            source: path.resolve(
-              __dirname,
-              "./files/Желающие проебаться на хаке.docx"
-            ),
+            source: path.resolve(__dirname, `./files/${raport_name}.docx`),
           });
         }
       }
