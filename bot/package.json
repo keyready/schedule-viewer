@@ -1,0 +1,18 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "docxtemplater": "^3.40.2",
+    "nodemon": "^3.0.1",
+    "pizzip": "^3.1.4",
+    "telegraf": "^4.15.0"
+  }
+}
