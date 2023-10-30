@@ -16,7 +16,7 @@ function generateDocument(data, filename) {
     linebreaks: true,
   });
 
-  doc.render({ name: data.names.join("\n"), older: data.older });
+  doc.render({ ...data, name: data.names.join("\n") });
 
   const buf = doc.getZip().generate({
     type: "nodebuffer",

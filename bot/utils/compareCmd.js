@@ -8,6 +8,8 @@ function compareStrings(str1, str2) {
     }
   }
 
+  console.log(matchingChars.length, matchPercentage);
+
   return matchingChars.length >= matchPercentage;
 }
 

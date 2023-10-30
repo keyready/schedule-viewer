@@ -7,7 +7,10 @@ const path = require("path");
 const bot = new Telegraf("6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY");
 
 const keywords = ["бот", "ботяра", "папочка", "товарищБот"];
-const commands_list = ["расписание", "сделай рапорт на хак"];
+const commands_list = [
+  "расписание",
+  "сделай рапорт на хак. Имена: [имена через запятую]",
+];
 
 bot.start(async (ctx) => {
   ctx.reply("Привет!");
@@ -49,10 +52,12 @@ bot.on(message("text"), (ctx) => {
       }
 
       for (let i = 0; i < commands_list.length; i++) {
-        if (compareStrings(sentence, commands_list[i])) {
+        if (sentence.includes(commands_list[i])) {
+          const names = sentence.split("Имена: ")[1].split(", ");
+
           await generateDocument(
             {
-              names: ["Корчак Родион", "Кофанов Валя", "Поляков Дима"],
+              names,
               older: "курсанта Полякова Д.С.",
             },
             "Желающие проебаться на хаке"
