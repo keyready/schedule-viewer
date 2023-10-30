@@ -3,6 +3,8 @@ const { message } = require("telegraf/filters");
 const { generateDocument } = require("./utils/createDoc");
 const path = require("path");
 const { schedule } = require("node-cron");
+const { getRectangleFromExcel } = require("../server/utils/parser");
+const { filterDates } = require("./utils/filterDates");
 
 const bot = new Telegraf("6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY");
 
@@ -50,41 +52,68 @@ bot.action("whatcanido", (ctx) => {
   return ctx.reply("whatcanido");
 });
 
-bot.on(message("text"), (ctx) => {
+bot.on(message("text"), async (ctx) => {
   const message = ctx.update.message.text;
 
   keywords.map(async (keyword) => {
     if (message.toLowerCase().includes(keyword)) {
       const sentence = message.split(" ").slice(1).join(" ");
       if (!sentence) {
-        return ctx.reply("Ебать ты додик ебанный, где само обращение то?");
+        return await ctx.reply(
+          "Ебать ты додик ебанный, где само обращение то?"
+        );
       }
 
       for (let i = 0; i < commands_list.length; i++) {
         if (sentence.includes(commands_list[i])) {
-          const lines = sentence.split("\n");
-          const names = lines[1].split("Имена: ")[1].split(", ");
-          const commander = lines[2].split("Старший: ")[1];
-          const start_time = lines[3].split("Время начала: ")[1];
-          const end_time = lines[4].split("Время завершения: ")[1];
-          const event = lines[5].split("Событие: ")[1];
-          const raport_name =
-            lines[6]?.split("Название файла: ")[1] || `Рапорт на ${event}`;
+          switch (i) {
+            case 0: {
+              const group = sentence.split(" ")[2];
+              if (!group)
+                return ctx.reply(
+                  "Ты не указал группу\nНадо вот так: расписание для 611-2"
+                );
 
-          await generateDocument(
-            {
-              names,
-              commander,
-              start_time,
-              end_time,
-              event,
-            },
-            raport_name
-          );
+              const schedule = getRectangleFromExcel(
+                `../files/${group}.xlsx`,
+                "D6:W34"
+              );
+              const tomorrow = filterDates(schedule)[0];
 
-          return await ctx.replyWithDocument({
-            source: path.resolve(__dirname, `./files/${raport_name}.docx`),
-          });
+              return ctx.reply(
+                `Завтра ${new Date(tomorrow.date).toLocaleDateString(
+                  "ru-RU"
+                )}\n\n
+Расписание на завтра:\n${tomorrow.jobs.join("\n")}`
+              );
+            }
+
+            case 1: {
+              const lines = sentence.split("\n");
+              const names = lines[1].split("Имена: ")[1].split(", ");
+              const commander = lines[2].split("Старший: ")[1];
+              const start_time = lines[3].split("Время начала: ")[1];
+              const end_time = lines[4].split("Время завершения: ")[1];
+              const event = lines[5].split("Событие: ")[1];
+              const raport_name =
+                lines[6]?.split("Название файла: ")[1] || `Рапорт на ${event}`;
+
+              await generateDocument(
+                {
+                  names,
+                  commander,
+                  start_time,
+                  end_time,
+                  event,
+                },
+                raport_name
+              );
+
+              return await ctx.replyWithDocument({
+                source: path.resolve(__dirname, `./files/${raport_name}.docx`),
+              });
+            }
+          }
         }
       }
 
@@ -95,20 +124,27 @@ bot.on(message("text"), (ctx) => {
 
 async function everyHour() {
   await bot.telegram.sendMessage(
-    -4085684131,
+    -1002097048209,
     `В Петербурге ${new Date().getHours()} часов!`
   );
 }
-schedule("0 * * * *", everyHour);
 
 async function every20Hour() {
-  await bot.telegram.sendMessage(
-    -4085684131,
-    `Расписание на завтра: как можно сильнее проебаться`
+  const schedule = getRectangleFromExcel(`../files/611-11.xlsx`, "D6:W34");
+  const tomorrow = filterDates(schedule)[0];
+
+  const sentMessage = await bot.telegram.sendMessage(
+    -1002097048209,
+    `Завтра ${new Date(tomorrow.date).toLocaleDateString("ru-RU")}\n\n
+Расписание на завтра:\n${tomorrow.jobs.join("\n")}`
   );
+
+  const chatId = sentMessage.chat.id;
+  return await bot.telegram.pinChatMessage(chatId, sentMessage.message_id);
 }
 
 schedule("0 20 * * *", every20Hour);
+schedule("0 * * * *", everyHour);
 
 bot.launch();
 
