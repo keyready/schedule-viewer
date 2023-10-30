@@ -21,27 +21,21 @@ interface DynamicModuleLoaderProps {
     children?: ReactNode;
 }
 
-export const DynamicModuleLoader = (
-    props: DynamicModuleLoaderProps,
-) => {
+export const DynamicModuleLoader = (props: DynamicModuleLoaderProps) => {
     const store = useStore() as ReduxStoreWithManager;
     const dispatch = useDispatch();
 
     const { children, reducers, removeAfterUnmount = true } = props;
 
     useEffect(() => {
-        const mountedReducers =
-            store.reducerManager.getMountedReducers;
+        const mountedReducers = store.reducerManager.getMountedReducers;
 
         Object.entries(reducers).forEach(([name, reducer]) => {
             // Урок 57. Я не знаю, что сломалось, поэтому просто закомментил...)
             // @ts-ignore
             const mounted = mountedReducers[name as StateSchemaKey];
             if (!mounted) {
-                store.reducerManager.add(
-                    name as StateSchemaKey,
-                    reducer,
-                );
+                store.reducerManager.add(name as StateSchemaKey, reducer);
                 dispatch({ type: `@INIT ${name} reducer` });
             }
         });
@@ -49,9 +43,7 @@ export const DynamicModuleLoader = (
         return () => {
             if (removeAfterUnmount) {
                 Object.entries(reducers).forEach(([name]) => {
-                    store.reducerManager.remove(
-                        name as StateSchemaKey,
-                    );
+                    store.reducerManager.remove(name as StateSchemaKey);
                     dispatch({ type: `@DESTROY ${name} reducer` });
                 });
             }

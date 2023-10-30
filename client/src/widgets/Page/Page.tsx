@@ -1,12 +1,5 @@
 import { classNames } from 'shared/lib/classNames/classNames';
-import {
-    memo,
-    MutableRefObject,
-    ReactNode,
-    UIEvent,
-    useEffect,
-    useRef,
-} from 'react';
+import { memo, MutableRefObject, ReactNode, UIEvent, useEffect, useRef } from 'react';
 import { useInfiniteScroll } from 'shared/lib/hooks/useInfiniteScroll/useInfiniteScroll';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
 import { useLocation } from 'react-router-dom';

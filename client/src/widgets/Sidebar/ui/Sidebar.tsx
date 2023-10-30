@@ -15,11 +15,9 @@ export const Sidebar = memo((props: SidebarProps) => {
 
     return (
         <div
-            className={classNames(
-                classes.Sidebar,
-                { [classes.collapsed]: isCollapsed },
-                [className],
-            )}
+            className={classNames(classes.Sidebar, { [classes.collapsed]: isCollapsed }, [
+                className,
+            ])}
         >
             <h2>Сайдбар</h2>
         </div>

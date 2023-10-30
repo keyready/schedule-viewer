@@ -24,9 +24,7 @@ export const Disclosure = memo((props: DisclosureProps) => {
                     >
                         {title}
                     </HDisclosure.Button>
-                    <HDisclosure.Panel className={classes.panel}>
-                        {content}
-                    </HDisclosure.Panel>
+                    <HDisclosure.Panel className={classes.panel}>{content}</HDisclosure.Panel>
                 </>
             )}
         </HDisclosure>

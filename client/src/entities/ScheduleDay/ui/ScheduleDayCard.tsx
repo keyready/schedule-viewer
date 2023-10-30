@@ -38,12 +38,7 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
     }, [jobs]);
 
     return (
-        <VStack
-            maxW
-            className={classNames(classes.ScheduleDayCard, {}, [
-                className,
-            ])}
-        >
+        <VStack maxW className={classNames(classes.ScheduleDayCard, {}, [className])}>
             <h3 className={classes.title}>
                 {new Date(title).toLocaleDateString('ru-RU')}, {day}
             </h3>
@@ -53,12 +48,9 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                     title={
                         <HStack maxW justify="between">
                             <p style={{ fontWeight: 'bold' }}>
-                                {day.title.toUpperCase() ||
-                                    day.type.toUpperCase()}
+                                {day.title.toUpperCase() || day.type.toUpperCase()}
                             </p>
-                            <p style={{ fontWeight: 'bold' }}>
-                                {day.classroom}
-                            </p>
+                            <p style={{ fontWeight: 'bold' }}>{day.classroom}</p>
                         </HStack>
                     }
                     content={
@@ -66,18 +58,12 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                             <h2 className={classes.discTitle}>
                                 {subjects
                                     .filter(
-                                        (sub) =>
-                                            sub.abbr.toUpperCase() ===
-                                            day.title.toUpperCase(),
+                                        (sub) => sub.abbr.toUpperCase() === day.title.toUpperCase(),
                                     )[0]
                                     ?.title.toUpperCase()}
                             </h2>
                             <HStack maxW justify="between">
-                                <p>
-                                    {day.type.split('/')[0] === 'П'
-                                        ? 'Практика'
-                                        : 'Лекция'}
-                                </p>
+                                <p>{day.type.split('/')[0] === 'П' ? 'Практика' : 'Лекция'}</p>
                                 <p>{day.type.split('/')[1]}</p>
                             </HStack>
                             <HStack maxW justify="between">
@@ -100,8 +86,7 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                     {
                                         subjects.filter(
                                             (sub) =>
-                                                sub.abbr.toUpperCase() ===
-                                                day.title.toUpperCase(),
+                                                sub.abbr.toUpperCase() === day.title.toUpperCase(),
                                         )[0]?.kaf
                                     }
                                 </p>

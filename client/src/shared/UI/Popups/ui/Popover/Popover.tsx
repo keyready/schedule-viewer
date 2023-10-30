@@ -14,25 +14,13 @@ interface PopoverProps {
 }
 
 export const Popover = (props: PopoverProps) => {
-    const {
-        className,
-        direction = 'bottom left',
-        trigger,
-        children,
-    } = props;
+    const { className, direction = 'bottom left', trigger, children } = props;
 
     const menuClasses = [directionsMapper[direction]];
 
     return (
-        <HPopover
-            className={classNames(classes.Popover, {}, [
-                className,
-                popupClasses.popup,
-            ])}
-        >
-            <HPopover.Button className={popupClasses.trigger}>
-                {trigger}
-            </HPopover.Button>
+        <HPopover className={classNames(classes.Popover, {}, [className, popupClasses.popup])}>
+            <HPopover.Button className={popupClasses.trigger}>{trigger}</HPopover.Button>
 
             {/* <Transition */}
             {/*    style={{ zIndex: -1 }} */}
@@ -43,9 +31,7 @@ export const Popover = (props: PopoverProps) => {
             {/*    leaveFrom={classes.leaveFrom} */}
             {/*    leaveTo={classes.leaveTo} */}
             {/* > */}
-            <HPopover.Panel
-                className={classNames(classes.panel, {}, menuClasses)}
-            >
+            <HPopover.Panel className={classNames(classes.panel, {}, menuClasses)}>
                 {children}
             </HPopover.Panel>
             {/* </Transition> */}

@@ -2,7 +2,7 @@ import { BuildOptions } from '../config/types';
 import babelRemoveNodePlugin from '../../babel/babelRemoveNodePlugin';
 
 interface BuildBabelLoaderProps extends BuildOptions {
-    isTsx?: boolean
+    isTsx?: boolean;
 }
 
 export function buildBabelLoader({ isTsx }: BuildBabelLoaderProps) {

@@ -23,13 +23,7 @@ interface DropdownProps {
 }
 
 export const Dropdown = (props: DropdownProps) => {
-    const {
-        className,
-        trigger,
-        items,
-        direction = 'top left',
-        hover = false,
-    } = props;
+    const { className, trigger, items, direction = 'top left', hover = false } = props;
 
     const menuClasses = [directionsMapper[direction]];
 
@@ -38,19 +32,13 @@ export const Dropdown = (props: DropdownProps) => {
     return (
         <Menu
             as="div"
-            className={classNames(popupClasses.popup, {}, [
-                className,
-            ])}
+            className={classNames(popupClasses.popup, {}, [className])}
             onMouseLeave={() => setIsShown(false)}
         >
             {hover ? (
-                <div onMouseEnter={() => setIsShown(true)}>
-                    {trigger}
-                </div>
+                <div onMouseEnter={() => setIsShown(true)}>{trigger}</div>
             ) : (
-                <Menu.Button className={popupClasses.trigger}>
-                    {trigger}
-                </Menu.Button>
+                <Menu.Button className={popupClasses.trigger}>{trigger}</Menu.Button>
             )}
 
             <Transition
@@ -65,18 +53,10 @@ export const Dropdown = (props: DropdownProps) => {
                 <Menu.Items
                     onMouseLeave={() => setIsShown(false)}
                     static={hover ? isShown : false}
-                    className={classNames(
-                        classes.items,
-                        {},
-                        menuClasses,
-                    )}
+                    className={classNames(classes.items, {}, menuClasses)}
                 >
                     {items.map((item, index) => {
-                        const content = ({
-                            active,
-                        }: {
-                            active: boolean;
-                        }) => (
+                        const content = ({ active }: { active: boolean }) => (
                             <button
                                 className={classNames(classes.item, {
                                     [popupClasses.active]: active,
@@ -98,19 +78,13 @@ export const Dropdown = (props: DropdownProps) => {
                                     to={item.href}
                                     disabled={item.disabled}
                                 >
-                                    <AppLink to={item.href}>
-                                        {item.content}
-                                    </AppLink>
+                                    <AppLink to={item.href}>{item.content}</AppLink>
                                 </Menu.Item>
                             );
                         }
 
                         return (
-                            <Menu.Item
-                                key={item.content}
-                                as={Fragment}
-                                disabled={item.disabled}
-                            >
+                            <Menu.Item key={item.content} as={Fragment} disabled={item.disabled}>
                                 {content}
                             </Menu.Item>
                         );
