@@ -37,16 +37,6 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
         return result;
     }, [jobs]);
 
-    useEffect(() => {
-        const hello = () => {
-            if (subjects?.length)
-                subjects?.map((sub) => console.log(sub.title));
-            else console.log(subjects);
-        };
-
-        hello();
-    }, [subjects]);
-
     return (
         <VStack
             maxW
