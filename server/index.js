@@ -41,4 +41,6 @@ app.get('/api/schedule', (req, res) => {
     return res.status(200).json(schedule);
 });
 
-app.listen(5000);
+app.listen(port, () => {
+    console.log(`Server started on http://localhost:${port}`);
+});

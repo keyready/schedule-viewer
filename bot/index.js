@@ -2,49 +2,123 @@ const { Telegraf, Markup } = require('telegraf');
 const { message } = require('telegraf/filters');
 const path = require('path');
 const { schedule } = require('node-cron');
+const DB = require('./config/db.connect');
+const { GroupModel } = require('./models/group.model');
 
-const { SaveGroup } = require('../server/utils/saveGroup');
 const { generateDocument, filterDates } = require('./utils');
 const { getRectangleFromExcel } = require('../server/utils/parser');
+const { PinnedModel } = require('./models/pinned.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
-const keywords = ['бот', 'ботяра', 'папочка', 'товарищБот'];
+const keywords = ['бот', 'ботяра', 'товарищБот'];
 const commandsList = ['расписание', 'сделай рапорт на хак'];
 const templates = [
-    '',
-    'Имена: через запятую участники\n' +
+    '\n - расписание для [номер группы, например, 611-11]',
+    '\n - сделай рапорт на хак\n' +
+        'Имена: через запятую участники\n' +
         'Старший: через запятую старшие\n' +
         'Время начала: строка вида чч:мм дд:мм:гггг\n' +
         'Время завершения: строка вида чч:мм дд:мм:гггг\n' +
         'Событие: название_события',
 ];
 
-bot.start(async (ctx) => {
-    ctx.reply('Привет!');
+async function helpRouter(ctx, type) {
+    switch (type) {
+        case 'edit': {
+            return ctx.editMessageText(
+                'Что ты хочешь уточнить?',
+                Markup.inlineKeyboard([
+                    [Markup.button.callback('Как ко мне можно обращаться?', 'appeal')],
+                    [Markup.button.callback('Список команд', 'command_list')],
+                    [Markup.button.callback('Что я могу', 'whatcanido')],
+                ]),
+            );
+        }
+
+        default: {
+            return ctx.reply(
+                'Что ты хочешь уточнить?',
+                Markup.inlineKeyboard([
+                    [Markup.button.callback('Как ко мне можно обращаться?', 'appeal')],
+                    [Markup.button.callback('Список команд', 'command_list')],
+                    [Markup.button.callback('Что я могу', 'whatcanido')],
+                ]),
+            );
+        }
+    }
+}
+
+bot.start(async (ctx) =>
+    ctx.reply('Привет! Чтобы не задавать глупые вопросу админу: сразу напиши /help'),
+);
+
+bot.command('register', async (ctx) => {
+    const group = ctx.message.text.split(' ')[1];
+
+    const candidate = await GroupModel.findAll({
+        raw: true,
+        where: {
+            chat_id: ctx.chat.id.toString(),
+        },
+    });
+
+    if (candidate.length) {
+        return ctx.reply(`Эта группа уже зарегистрирована!`);
+    }
+
+    await GroupModel.create({
+        group,
+        chat_id: ctx.chat.id.toString(),
+    });
+
+    return ctx.reply(`Вы зарегистрировали группу ${group}`);
 });
 
-bot.help((ctx) =>
-    ctx.reply(
-        'Что ты хочешь уточнить?',
-        Markup.inlineKeyboard([
-            [Markup.button.callback('Как ко мне можно обращаться?', 'appeal')],
-            [Markup.button.callback('Список команд', 'command_list')],
-            [Markup.button.callback('Что я могу', 'whatcanido')],
-        ]),
+bot.command('unregister', async (ctx) => {
+    await GroupModel.destroy({
+        where: {
+            chat_id: ctx.chat.id.toString(),
+        },
+    });
+
+    return ctx.reply(
+        'Группа успешно удалено из списка рассылки. Спасибо, что были со мной\n' +
+            'Предательство — всегда обидно',
+    );
+});
+
+bot.help(helpRouter);
+bot.action('help', (ctx) => helpRouter(ctx, 'edit'));
+
+bot.action('appeal', (ctx) =>
+    ctx.editMessageText(
+        `Ты можешь написать одно из ключевых слов (фраз) в начале своего обращения, чтобы вызвать меня:\n- ${keywords.join(
+            '\n- ',
+        )}`,
+        Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
     ),
 );
 
-bot.action('appeal', (ctx) =>
-    ctx.editMessageText(`Ты можешь написать одно из ключевых слов (фраз) в начале своего обращения, чтобы вызвать меня:
-${keywords.join(', ')}`),
+bot.action('whatcanido', (ctx) =>
+    ctx.editMessageText(
+        'Я могу пока не много, но уже достаточно, чтобы быть полезным (своему Отечеству). Могу:\n' +
+            '- показывать расписание на завтра\n' +
+            '- сделать рапорт на хак\n' +
+            '- каждый вечер напоминать тебе, какие завтра пары',
+        Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
+    ),
 );
 
 bot.action('command_list', (ctx) =>
-    ctx.reply(`Вот список команд, которые нужно указать после обращения, чтобы я начал что-то делать: 
-${commandsList.join(
-    ', ',
-)}\n\n\nА вот образец команд, чтобы я понял, что ты от меня хочешь: ${templates.join('\n')}`),
+    ctx.editMessageText(
+        `Вот список команд, которые нужно указать после обращения, чтобы я начал что-то делать:\n- ${commandsList.join(
+            '\n- ',
+        )}\n\n
+А вот образец команд, чтобы я понял, что ты от меня хочешь:
+${templates.join(' ')}`,
+        Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
+    ),
 );
 
 bot.action('whatcanido', (ctx) => ctx.reply('whatcanido'));
@@ -135,27 +209,62 @@ bot.on(message('text'), async (ctx) => {
 });
 
 async function everyHour() {
-    await bot.telegram.sendMessage(-1002097048209, `В Петербурге ${new Date().getHours()} часов!`);
+    const groups = await GroupModel.findAll({
+        raw: true,
+    });
+
+    for (let i = 0; i < groups.length; i += 1) {
+        await bot.telegram.sendMessage(
+            groups[i].chat_id,
+            `В Петербурге ${new Date().getHours()} часов!`,
+        );
+    }
 }
 
 async function every20Hour() {
-    const schedule = getRectangleFromExcel(`../files/611-11.xlsx`, 'D6:W34');
-    const tomorrow = filterDates(schedule)[0];
+    const groups = await GroupModel.findAll({
+        raw: true,
+    });
 
-    const sentMessage = await bot.telegram.sendMessage(
-        -1002097048209,
-        `Завтра ${new Date(tomorrow.date).toLocaleDateString('ru-RU')}\n\n
+    groups.forEach(async (group) => {
+        const schedule = getRectangleFromExcel(`../files/${group.group}.xlsx`, 'D6:W34');
+        const tomorrow = filterDates(schedule)[0];
+
+        const sentMessage = await bot.telegram.sendMessage(
+            group.chat_id,
+            `Завтра ${new Date(tomorrow.date).toLocaleDateString('ru-RU')}\n\n
 Расписание на завтра:\n${tomorrow.jobs.join('\n')}`,
-    );
+        );
 
-    const chatId = sentMessage.chat.id;
-    return bot.telegram.pinChatMessage(chatId, sentMessage.message_id);
+        const chatId = sentMessage.chat.id;
+        const pinnedMessages = await PinnedModel.findAll({
+            raw: true,
+            where: { chat_id: chatId.toString() },
+        });
+        for (let j = 0; j < pinnedMessages.length; j += 1) {
+            await bot.telegram.unpinChatMessage(chatId, pinnedMessages[j].message_id);
+        }
+        // await PinnedModel.destroy({ where: { chat_id: chatId } });
+
+        await bot.telegram.pinChatMessage(chatId, sentMessage.message_id);
+        await PinnedModel.create({ message_id: sentMessage.message_id, chat_id: chatId });
+    });
 }
 
 schedule('0 20 * * *', every20Hour);
+// schedule('*/10 * * * * *', every20Hour);
 schedule('0 * * * *', everyHour);
 
-bot.launch();
+async function startBot() {
+    try {
+        await DB.sync({ alter: true }).then(() => {
+            bot.launch();
+        });
+    } catch (e) {
+        console.log(e);
+    }
+}
 
+startBot();
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
