@@ -93,6 +93,23 @@ bot.on(message("text"), (ctx) => {
   });
 });
 
+async function everyHour() {
+  await bot.telegram.sendMessage(
+    -4085684131,
+    `В Петербурге ${new Date().getHours()} часов!`
+  );
+}
+schedule("0 * * * *", everyHour);
+
+async function every20Hour() {
+  await bot.telegram.sendMessage(
+    -4085684131,
+    `Расписание на завтра: как можно сильнее проебаться`
+  );
+}
+
+schedule("0 20 * * *", every20Hour);
+
 bot.launch();
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
