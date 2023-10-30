@@ -1,4 +1,4 @@
-const { Telegraf, Markup } = require("telegraf");
+const { Telegraf, Markup, Format } = require("telegraf");
 const { message } = require("telegraf/filters");
 const { generateDocument } = require("./utils/createDoc");
 const path = require("path");
@@ -60,7 +60,7 @@ bot.on(message("text"), async (ctx) => {
       const sentence = message.split(" ").slice(1).join(" ");
       if (!sentence) {
         return await ctx.reply(
-          "Ебать ты додик ебанный, где само обращение то?"
+          "Нужно указать саму команду. Если не знаешь, попробуй /help"
         );
       }
 
@@ -69,49 +69,66 @@ bot.on(message("text"), async (ctx) => {
           switch (i) {
             case 0: {
               const group = sentence.split(" ")[2];
-              if (!group)
+              if (!group) {
                 return ctx.reply(
                   "Ты не указал группу\nНадо вот так: расписание для 611-2"
                 );
+              }
 
-              const schedule = getRectangleFromExcel(
-                `../files/${group}.xlsx`,
-                "D6:W34"
-              );
-              const tomorrow = filterDates(schedule)[0];
+              try {
+                const schedule = getRectangleFromExcel(
+                  `../files/${group}.xlsx`,
+                  "D6:W34"
+                );
+                const tomorrow = filterDates(schedule)[0];
 
-              return ctx.reply(
-                `Завтра ${new Date(tomorrow.date).toLocaleDateString(
-                  "ru-RU"
-                )}\n\n
-Расписание на завтра:\n${tomorrow.jobs.join("\n")}`
-              );
+                return ctx.reply(
+                  `Завтра ${new Date(tomorrow.date).toLocaleDateString(
+                    "ru-RU"
+                  )}\n\n
+  Расписание на завтра:\n${tomorrow.jobs.join("\n")}`
+                );
+              } catch (e) {
+                return ctx.reply(
+                  "Группа, которую ты указал, не найдена. Попробуй еще раз"
+                );
+              }
             }
 
             case 1: {
-              const lines = sentence.split("\n");
-              const names = lines[1].split("Имена: ")[1].split(", ");
-              const commander = lines[2].split("Старший: ")[1];
-              const start_time = lines[3].split("Время начала: ")[1];
-              const end_time = lines[4].split("Время завершения: ")[1];
-              const event = lines[5].split("Событие: ")[1];
-              const raport_name =
-                lines[6]?.split("Название файла: ")[1] || `Рапорт на ${event}`;
+              try {
+                const lines = sentence.split("\n");
+                const names = lines[1].split("Имена: ")[1].split(", ");
+                const commander = lines[2].split("Старший: ")[1];
+                const start_time = lines[3].split("Время начала: ")[1];
+                const end_time = lines[4].split("Время завершения: ")[1];
+                const event = lines[5].split("Событие: ")[1];
+                const raport_name =
+                  lines[6]?.split("Название файла: ")[1] ||
+                  `Рапорт на ${event}`;
 
-              await generateDocument(
-                {
-                  names,
-                  commander,
-                  start_time,
-                  end_time,
-                  event,
-                },
-                raport_name
-              );
+                await generateDocument(
+                  {
+                    names,
+                    commander,
+                    start_time,
+                    end_time,
+                    event,
+                  },
+                  raport_name
+                );
 
-              return await ctx.replyWithDocument({
-                source: path.resolve(__dirname, `./files/${raport_name}.docx`),
-              });
+                return await ctx.replyWithDocument({
+                  source: path.resolve(
+                    __dirname,
+                    `./files/${raport_name}.docx`
+                  ),
+                });
+              } catch (e) {
+                return await ctx.reply(
+                  "Какая-то ошибка\nПроверь правильность написания команды — это очень важно!"
+                );
+              }
             }
           }
         }
