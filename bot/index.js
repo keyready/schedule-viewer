@@ -2,6 +2,7 @@ const { Telegraf, Markup } = require('telegraf');
 const { message } = require('telegraf/filters');
 const path = require('path');
 const { schedule } = require('node-cron');
+const gm = require('gm');
 const DB = require('./config/db.connect');
 const { GroupModel } = require('./models/group.model');
 
@@ -49,8 +50,23 @@ async function helpRouter(ctx, type) {
     }
 }
 
-bot.start(async (ctx) =>
-    ctx.reply('Привет! Чтобы не задавать глупые вопросу админу: сразу напиши /help'),
+bot.start(
+    async (ctx) => {
+        await gm(200, 200, '#ddff99f3')
+            .font('./fonts/Roboto-BoldItalic.ttf', 20)
+            .drawText(10, 50, 'Хыыыы')
+            .write(path.resolve(__dirname, './generated/file.jpg'), (err) => {
+                console.log(err);
+            });
+
+        ctx.replyWithPhoto(
+            {
+                source: path.resolve(__dirname, './generated/file.jpg'),
+            },
+            { caption: 'Сгенерированная картинка' },
+        );
+    },
+    // source: 'Привет!\nЧтобы не задавать глупые вопросу админу: сразу напиши /help'
 );
 
 bot.command('register', async (ctx) => {
@@ -186,9 +202,15 @@ bot.on(message('text'), async (ctx) => {
                                     raport_name,
                                 );
 
-                                return await ctx.replyWithDocument({
-                                    source: path.resolve(__dirname, `./files/${raport_name}.docx`),
-                                });
+                                return await ctx.replyWithDocument(
+                                    {
+                                        source: path.resolve(
+                                            __dirname,
+                                            `./files/${raport_name}.docx`,
+                                        ),
+                                    },
+                                    { caption: 'Удачи в подписании ;)' },
+                                );
                             } catch (e) {
                                 return await ctx.reply(
                                     'Какая-то ошибка\nПроверь правильность написания команды — это очень важно!',
