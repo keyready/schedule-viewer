@@ -156,7 +156,6 @@ bot.action('calendar', async (ctx) => {
     const date = new Date();
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    console.log(firstDay);
     const buttons = [];
 
     const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
