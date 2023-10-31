@@ -12,7 +12,7 @@ const { UserModel } = require('./models/user.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
-const keywords = ['бот', 'товарищБот'];
+const keywords = ['бот', 'товарищБот', 'папочка'];
 const commandsList = ['расписание', 'сделай рапорт на хак'];
 const templates = [
     '\n - расписание для [номер группы, например, 611-11]',
@@ -455,7 +455,7 @@ async function every20Hour() {
     });
 }
 
-schedule('0 20 * * *', every20Hour);
+schedule('0 20,21,22 * * *', every20Hour);
 // schedule('*/10 * * * * *', every20Hour);
 schedule('0 * * * *', everyHour);
 
