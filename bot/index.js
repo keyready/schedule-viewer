@@ -200,7 +200,7 @@ bot.action('calendar', async (ctx) => {
     return ctx.editMessageText(`Вот календарь на ${months[new Date().getMonth()]}`, inlineKeyboard);
 });
 
-bot.action(/day_\d+/, (ctx) => {
+bot.action(/day_\d+/, async (ctx) => {
     const day = ctx.match[0].split('_')[1];
 
     function findCurrentDayInMonth(dates, day) {
@@ -223,15 +223,35 @@ bot.action(/day_\d+/, (ctx) => {
         });
     }
 
-    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
-    const foundDate = findCurrentDayInMonth(schedule, day);
+    const candidate = await UserModel.findAll({
+        raw: true,
+        where: { chat_id: ctx.update.callback_query.from.id.toString() },
+    });
 
-    return ctx.editMessageText(
-        `${new Date(foundDate.date).toLocaleDateString(
-            'ru-RU',
-        )}\n\nРасписание на этот день:\n${foundDate.jobs.join('\n')}`,
-        Markup.inlineKeyboard([[Markup.button.callback('Показать календарь', 'calendar')]]),
-    );
+    let dbGroup = '';
+    if (candidate.length) {
+        dbGroup = candidate[0].group;
+    }
+
+    try {
+        const schedule = getRectangleFromExcel(
+            `../files/${selectedGroup || dbGroup}.xlsx`,
+            'D6:W34',
+        );
+        const foundDate = findCurrentDayInMonth(schedule, day);
+
+        return ctx.editMessageText(
+            `${new Date(foundDate.date).toLocaleDateString(
+                'ru-RU',
+            )}\n\nРасписание на этот день:\n${foundDate.jobs.join('\n')}`,
+            Markup.inlineKeyboard([[Markup.button.callback('Показать календарь', 'calendar')]]),
+        );
+    } catch (e) {
+        console.log(e);
+        ctx.editMessageText(
+            'Произошла ошибка при получении расписания.\nПроверь, что ты зарегистрировался!',
+        );
+    }
 });
 
 bot.action('prev_day', (ctx) => {
