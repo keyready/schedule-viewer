@@ -22,6 +22,9 @@ const templates = [
         'Время завершения: строка вида чч:мм дд:мм:гггг\n' +
         'Событие: название_события',
 ];
+let currentShift = 1;
+// TODO потом занести это в бд
+let selectedGroup = '';
 
 async function helpRouter(ctx, type) {
     switch (type) {
@@ -123,6 +126,47 @@ ${templates.join(' ')}`,
 
 bot.action('whatcanido', (ctx) => ctx.reply('whatcanido'));
 
+bot.action('prev_day', (ctx) => {
+    if (currentShift === 0) currentShift = -1;
+    else currentShift -= 1;
+
+    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
+    const tomorrow = filterDates(schedule, currentShift);
+
+    return ctx.editMessageText(
+        `${new Date(tomorrow.date).toLocaleDateString(
+            'ru-RU',
+        )}\n\nРасписание:\n${tomorrow.jobs.join('\n')}`,
+        Markup.inlineKeyboard([
+            [
+                Markup.button.callback('Предыдущий день', 'prev_day'),
+                Markup.button.callback('Следующий день', 'next_day'),
+            ],
+        ]),
+    );
+});
+bot.action('next_day', (ctx) => {
+    currentShift += 1;
+    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
+    const tomorrow = filterDates(schedule, currentShift);
+
+    try {
+        return ctx.editMessageText(
+            `${new Date(tomorrow.date).toLocaleDateString(
+                'ru-RU',
+            )}\n\nРасписание:\n${tomorrow.jobs.join('\n')}`,
+            Markup.inlineKeyboard([
+                [
+                    Markup.button.callback('Предыдущий день', 'prev_day'),
+                    Markup.button.callback('Следующий день', 'next_day'),
+                ],
+            ]),
+        );
+    } catch (e) {
+        console.log(e.message);
+    }
+});
+
 bot.on(message('text'), async (ctx) => {
     const message = ctx.update.message.text;
 
@@ -149,15 +193,23 @@ bot.on(message('text'), async (ctx) => {
                                     `../files/${group}.xlsx`,
                                     'D6:W34',
                                 );
-                                const tomorrow = filterDates(schedule)[0];
+                                const tomorrow = filterDates(schedule);
+                                selectedGroup = group;
+                                currentShift = 1;
 
                                 return ctx.reply(
                                     `Завтра ${new Date(tomorrow.date).toLocaleDateString(
                                         'ru-RU',
-                                    )}\n\n
-  Расписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                    )}\n\nРасписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                    Markup.inlineKeyboard([
+                                        [
+                                            Markup.button.callback('Предыдущий день', 'prev_day'),
+                                            Markup.button.callback('Следующий день', 'next_day'),
+                                        ],
+                                    ]),
                                 );
                             } catch (e) {
+                                console.log(e);
                                 return ctx.reply(
                                     'Группа, которую ты указал, не найдена. Попробуй еще раз',
                                 );
