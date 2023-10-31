@@ -12,7 +12,7 @@ const { UserModel } = require('./models/user.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
-const keywords = ['бот', 'ботяра', 'товарищБот'];
+const keywords = ['бот', 'товарищБот'];
 const commandsList = ['расписание', 'сделай рапорт на хак'];
 const templates = [
     '\n - расписание для [номер группы, например, 611-11]',
@@ -24,7 +24,6 @@ const templates = [
         'Событие: название_события',
 ];
 let currentShift = 1;
-// TODO потом занести это в бд
 let selectedGroup = '';
 
 async function helpRouter(ctx, type) {
@@ -54,7 +53,6 @@ async function helpRouter(ctx, type) {
 }
 
 bot.start(async (ctx) => {
-    const message = ctx.message.text.split(' ');
     const chatId = ctx.chat.id.toString();
 
     const candidate = await UserModel.findAll({ raw: true, where: { chat_id: chatId } });
@@ -70,14 +68,14 @@ bot.start(async (ctx) => {
 });
 
 bot.command('register_user', async (ctx) => {
-    const group = ctx.message.text.split(' ')[1];
-    if (!group) return ctx.reply('хуй');
-
     const chatId = ctx.message.from.id.toString();
     const candidate = await UserModel.findAll({ raw: true, where: { chat_id: chatId } });
     if (candidate.length) {
-        return ctx.reply('Ты уже зарегистрирован! Дважды делать это необходимость нет!');
+        return ctx.reply('Ты уже зарегистрирован!\nДважды делать это необходимость нет!');
     }
+
+    const group = ctx.message.text.split(' ')[1];
+    if (!group) return ctx.reply('Не угадал ;(\nПопробуй вот так: `/register_user [группа]`');
 
     await UserModel.create({ chat_id: chatId, group });
     return ctx.reply(`Отлично! Ты зарегистрировался!\nТвоя группа: ${group}`);
@@ -85,6 +83,8 @@ bot.command('register_user', async (ctx) => {
 
 bot.command('register', async (ctx) => {
     const group = ctx.message.text.split(' ')[1];
+
+    if (!group) return ctx.reply('Не угадал ;(\nПопробуй вот так: `/register [группа]`');
 
     const candidate = await GroupModel.findAll({
         raw: true,
@@ -135,7 +135,8 @@ bot.action('whatcanido', (ctx) =>
         'Я могу пока не много, но уже достаточно, чтобы быть полезным (своему Отечеству). Могу:\n' +
             '- показывать расписание на завтра\n' +
             '- сделать рапорт на хак\n' +
-            '- каждый вечер напоминать тебе, какие завтра пары',
+            '- каждый вечер напоминать тебе, какие завтра пары\n' +
+            '- запоминать пользователей и группы, чтобы автоматически показывать расписание без уточнения',
         Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
     ),
 );
@@ -150,8 +151,6 @@ ${templates.join(' ')}`,
         Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
     ),
 );
-
-bot.action('whatcanido', (ctx) => ctx.reply('whatcanido'));
 
 bot.action('prev_day', (ctx) => {
     if (currentShift === 0) currentShift = -1;
