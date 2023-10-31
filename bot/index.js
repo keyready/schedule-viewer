@@ -1,4 +1,4 @@
-const { Telegraf, Markup } = require('telegraf');
+const { Telegraf, Markup, Format } = require('telegraf');
 const { message } = require('telegraf/filters');
 const path = require('path');
 const { schedule } = require('node-cron');
@@ -8,6 +8,7 @@ const { GroupModel } = require('./models/group.model');
 const { generateDocument, filterDates } = require('./utils');
 const { getRectangleFromExcel } = require('../server/utils/parser');
 const { PinnedModel } = require('./models/pinned.model');
+const { UserModel } = require('./models/user.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
@@ -52,9 +53,35 @@ async function helpRouter(ctx, type) {
     }
 }
 
-bot.start(async (ctx) =>
-    ctx.reply('Привет! Чтобы не задавать глупые вопросу админу: сразу напиши /help'),
-);
+bot.start(async (ctx) => {
+    const message = ctx.message.text.split(' ');
+    const chatId = ctx.chat.id.toString();
+
+    const candidate = await UserModel.findAll({ raw: true, where: { chat_id: chatId } });
+    if (candidate.length) {
+        return ctx.reply('Привет!\nЧтобы не задавать глупые вопросу админу: сразу напиши /help');
+    }
+
+    return ctx.reply(
+        'Привет, новичок!\n' +
+            'Попробуй команду `/register_user [группа]`, чтобы я запомнил тебя.\n' +
+            'Чтобы не задавать глупые вопросу админу: сразу напиши /help',
+    );
+});
+
+bot.command('register_user', async (ctx) => {
+    const group = ctx.message.text.split(' ')[1];
+    if (!group) return ctx.reply('хуй');
+
+    const chatId = ctx.message.from.id.toString();
+    const candidate = await UserModel.findAll({ raw: true, where: { chat_id: chatId } });
+    if (candidate.length) {
+        return ctx.reply('Ты уже зарегистрирован! Дважды делать это необходимость нет!');
+    }
+
+    await UserModel.create({ chat_id: chatId, group });
+    return ctx.reply(`Отлично! Ты зарегистрировался!\nТвоя группа: ${group}`);
+});
 
 bot.command('register', async (ctx) => {
     const group = ctx.message.text.split(' ')[1];
@@ -169,6 +196,7 @@ bot.action('next_day', (ctx) => {
 
 bot.on(message('text'), async (ctx) => {
     const message = ctx.update.message.text;
+    const chatId = ctx.message.from.id.toString();
 
     keywords.map(async (keyword) => {
         if (message.toLowerCase().includes(keyword)) {
@@ -181,14 +209,48 @@ bot.on(message('text'), async (ctx) => {
                 if (sentence.includes(commandsList[i])) {
                     switch (i) {
                         case 0: {
-                            const group = sentence.split(' ')[2];
-                            if (!group) {
-                                return ctx.reply(
-                                    'Ты не указал группу\nНадо вот так: расписание для 611-2',
-                                );
-                            }
-
                             try {
+                                const group = sentence.split(' ')[2];
+
+                                if (!group) {
+                                    const candidate = await UserModel.findAll({
+                                        raw: true,
+                                        where: { chat_id: chatId },
+                                    });
+
+                                    if (!candidate.length) {
+                                        return ctx.reply(
+                                            'Ты не указал группу\nНадо вот так: расписание для 611-2\n' +
+                                                'Чтобы каждый раз не указывать группу, просто зарегистрируйся: `/register_user [номер группы]`',
+                                        );
+                                    }
+
+                                    selectedGroup = candidate[0].group;
+                                    currentShift = 1;
+                                    const schedule = getRectangleFromExcel(
+                                        `../files/${selectedGroup}.xlsx`,
+                                        'D6:W34',
+                                    );
+                                    const tomorrow = filterDates(schedule);
+                                    return ctx.reply(
+                                        `Завтра ${new Date(tomorrow.date).toLocaleDateString(
+                                            'ru-RU',
+                                        )}\n\nРасписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                        Markup.inlineKeyboard([
+                                            [
+                                                Markup.button.callback(
+                                                    'Предыдущий день',
+                                                    'prev_day',
+                                                ),
+                                                Markup.button.callback(
+                                                    'Следующий день',
+                                                    'next_day',
+                                                ),
+                                            ],
+                                        ]),
+                                    );
+                                }
+
                                 const schedule = getRectangleFromExcel(
                                     `../files/${group}.xlsx`,
                                     'D6:W34',
@@ -280,7 +342,7 @@ async function every20Hour() {
 
     groups.forEach(async (group) => {
         const schedule = getRectangleFromExcel(`../files/${group.group}.xlsx`, 'D6:W34');
-        const tomorrow = filterDates(schedule)[0];
+        const tomorrow = filterDates(schedule);
 
         const sentMessage = await bot.telegram.sendMessage(
             group.chat_id,
