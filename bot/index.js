@@ -1,4 +1,4 @@
-const { Telegraf, Markup, Format } = require('telegraf');
+const { Telegraf, Markup } = require('telegraf');
 const { message } = require('telegraf/filters');
 const path = require('path');
 const { schedule } = require('node-cron');
@@ -223,13 +223,13 @@ bot.action(/day_\d+/, (ctx) => {
         });
     }
 
-    const schedule = getRectangleFromExcel(`../files/611-11.xlsx`, 'D6:W34');
+    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
     const foundDate = findCurrentDayInMonth(schedule, day);
 
     return ctx.editMessageText(
         `${new Date(foundDate.date).toLocaleDateString(
             'ru-RU',
-        )}\n\nРасписание на завтра:\n${foundDate.jobs.join('\n')}`,
+        )}\n\nРасписание на этот день:\n${foundDate.jobs.join('\n')}`,
         Markup.inlineKeyboard([[Markup.button.callback('Показать календарь', 'calendar')]]),
     );
 });

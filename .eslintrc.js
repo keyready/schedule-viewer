@@ -15,6 +15,7 @@ module.exports = {
     plugins: ['react', '@typescript-eslint', 'react-hooks'],
     rules: {
         'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.tsx'] }],
+        'no-bitwise': 'off',
         'camelcase': 'off',
         'no-await-in-loop': 'off',
         'max-len': ['error', { ignoreComments: true, code: 150 }],
