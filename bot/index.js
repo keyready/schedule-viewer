@@ -8,10 +8,11 @@ const { GroupModel } = require('./models/group.model');
 const { generateDocument, filterDates } = require('./utils');
 const { getRectangleFromExcel } = require('../server/utils/parser');
 const { PinnedModel } = require('./models/pinned.model');
+const { UserModel } = require('./models/user.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
-const keywords = ['бот', 'ботяра', 'товарищБот'];
+const keywords = ['бот', 'товарищБот'];
 const commandsList = ['расписание', 'сделай рапорт на хак'];
 const templates = [
     '\n - расписание для [номер группы, например, 611-11]',
@@ -22,6 +23,8 @@ const templates = [
         'Время завершения: строка вида чч:мм дд:мм:гггг\n' +
         'Событие: название_события',
 ];
+let currentShift = 1;
+let selectedGroup = '';
 
 async function helpRouter(ctx, type) {
     switch (type) {
@@ -49,12 +52,39 @@ async function helpRouter(ctx, type) {
     }
 }
 
-bot.start(async (ctx) =>
-    ctx.reply('Привет! Чтобы не задавать глупые вопросу админу: сразу напиши /help'),
-);
+bot.start(async (ctx) => {
+    const chatId = ctx.chat.id.toString();
+
+    const candidate = await UserModel.findAll({ raw: true, where: { chat_id: chatId } });
+    if (candidate.length) {
+        return ctx.reply('Привет!\nЧтобы не задавать глупые вопросу админу: сразу напиши /help');
+    }
+
+    return ctx.reply(
+        'Привет, новичок!\n' +
+            'Попробуй команду `/register_user [группа]`, чтобы я запомнил тебя.\n' +
+            'Чтобы не задавать глупые вопросу админу: сразу напиши /help',
+    );
+});
+
+bot.command('register_user', async (ctx) => {
+    const chatId = ctx.message.from.id.toString();
+    const candidate = await UserModel.findAll({ raw: true, where: { chat_id: chatId } });
+    if (candidate.length) {
+        return ctx.reply('Ты уже зарегистрирован!\nДважды делать это необходимость нет!');
+    }
+
+    const group = ctx.message.text.split(' ')[1];
+    if (!group) return ctx.reply('Не угадал ;(\nПопробуй вот так: `/register_user [группа]`');
+
+    await UserModel.create({ chat_id: chatId, group });
+    return ctx.reply(`Отлично! Ты зарегистрировался!\nТвоя группа: ${group}`);
+});
 
 bot.command('register', async (ctx) => {
     const group = ctx.message.text.split(' ')[1];
+
+    if (!group) return ctx.reply('Не угадал ;(\nПопробуй вот так: `/register [группа]`');
 
     const candidate = await GroupModel.findAll({
         raw: true,
@@ -105,7 +135,8 @@ bot.action('whatcanido', (ctx) =>
         'Я могу пока не много, но уже достаточно, чтобы быть полезным (своему Отечеству). Могу:\n' +
             '- показывать расписание на завтра\n' +
             '- сделать рапорт на хак\n' +
-            '- каждый вечер напоминать тебе, какие завтра пары',
+            '- каждый вечер напоминать тебе, какие завтра пары\n' +
+            '- запоминать пользователей и группы, чтобы автоматически показывать расписание без уточнения',
         Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
     ),
 );
@@ -121,10 +152,134 @@ ${templates.join(' ')}`,
     ),
 );
 
-bot.action('whatcanido', (ctx) => ctx.reply('whatcanido'));
+bot.action('calendar', async (ctx) => {
+    const date = new Date();
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    const buttons = [];
+
+    const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    const months = [
+        'январь',
+        'февраль',
+        'март',
+        'апрель',
+        'май',
+        'июнь',
+        'июль',
+        'август',
+        'сентябрь',
+        'октябрь',
+        'ноябрь',
+        'декабрь',
+    ];
+    for (let i = 0; i < 7; i += 1) {
+        buttons.push(Markup.button.callback(days[i], 'empty'));
+    }
+
+    for (let i = 0; i < firstDay; i += 1) {
+        buttons.push(Markup.button.callback('\u200B', 'empty'));
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+        buttons.push(Markup.button.callback(day.toString(), `day_${day}`));
+    }
+
+    while (buttons.length % 7 !== 0) {
+        buttons.push(Markup.button.callback('\u200B', 'empty'));
+    }
+
+    const rows = [];
+    for (let i = 0; i < buttons.length; i += 7) {
+        rows.push(buttons.slice(i, i + 7));
+    }
+
+    const inlineKeyboard = Markup.inlineKeyboard(rows);
+
+    ctx.answerCbQuery();
+    return ctx.editMessageText(`Вот календарь на ${months[new Date().getMonth()]}`, inlineKeyboard);
+});
+
+bot.action(/day_\d+/, (ctx) => {
+    const day = ctx.match[0].split('_')[1];
+
+    function findCurrentDayInMonth(dates, day) {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        return dates.find((date) => {
+            const currentDate = new Date(date.date);
+
+            const dateDay = currentDate.getDate();
+            const dateMonth = currentDate.getMonth();
+            const dateYear = currentDate.getFullYear();
+
+            return (
+                ~~dateDay === ~~day &&
+                ~~dateMonth === ~~currentMonth &&
+                ~~dateYear === ~~currentYear
+            );
+        });
+    }
+
+    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
+    const foundDate = findCurrentDayInMonth(schedule, day);
+
+    return ctx.editMessageText(
+        `${new Date(foundDate.date).toLocaleDateString(
+            'ru-RU',
+        )}\n\nРасписание на этот день:\n${foundDate.jobs.join('\n')}`,
+        Markup.inlineKeyboard([[Markup.button.callback('Показать календарь', 'calendar')]]),
+    );
+});
+
+bot.action('prev_day', (ctx) => {
+    if (currentShift === 0) currentShift = -1;
+    else currentShift -= 1;
+
+    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
+    const tomorrow = filterDates(schedule, currentShift);
+
+    return ctx.editMessageText(
+        `${new Date(tomorrow.date).toLocaleDateString(
+            'ru-RU',
+        )}\n\nРасписание:\n${tomorrow.jobs.join('\n')}`,
+        Markup.inlineKeyboard([
+            [
+                Markup.button.callback('Предыдущий день', 'prev_day'),
+                Markup.button.callback('Следующий день', 'next_day'),
+            ],
+            [Markup.button.callback('Показать календарь', 'calendar')],
+        ]),
+    );
+});
+bot.action('next_day', (ctx) => {
+    currentShift += 1;
+    const schedule = getRectangleFromExcel(`../files/${selectedGroup}.xlsx`, 'D6:W34');
+    const tomorrow = filterDates(schedule, currentShift);
+
+    try {
+        return ctx.editMessageText(
+            `${new Date(tomorrow.date).toLocaleDateString(
+                'ru-RU',
+            )}\n\nРасписание:\n${tomorrow.jobs.join('\n')}`,
+            Markup.inlineKeyboard([
+                [
+                    Markup.button.callback('Предыдущий день', 'prev_day'),
+                    Markup.button.callback('Следующий день', 'next_day'),
+                ],
+                [Markup.button.callback('Показать календарь', 'calendar')],
+            ]),
+        );
+    } catch (e) {
+        console.log(e.message);
+    }
+});
 
 bot.on(message('text'), async (ctx) => {
     const message = ctx.update.message.text;
+    const chatId = ctx.message.from.id.toString();
 
     keywords.map(async (keyword) => {
         if (message.toLowerCase().includes(keyword)) {
@@ -137,27 +292,76 @@ bot.on(message('text'), async (ctx) => {
                 if (sentence.includes(commandsList[i])) {
                     switch (i) {
                         case 0: {
-                            const group = sentence.split(' ')[2];
-                            if (!group) {
-                                return ctx.reply(
-                                    'Ты не указал группу\nНадо вот так: расписание для 611-2',
-                                );
-                            }
-
                             try {
+                                const group = sentence.split(' ')[2];
+
+                                if (!group) {
+                                    const candidate = await UserModel.findAll({
+                                        raw: true,
+                                        where: { chat_id: chatId },
+                                    });
+
+                                    if (!candidate.length) {
+                                        return ctx.reply(
+                                            'Ты не указал группу\nНадо вот так: расписание для 611-2\n' +
+                                                'Чтобы каждый раз не указывать группу, просто зарегистрируйся: `/register_user [номер группы]`',
+                                        );
+                                    }
+
+                                    selectedGroup = candidate[0].group;
+                                    currentShift = 1;
+                                    const schedule = getRectangleFromExcel(
+                                        `../files/${selectedGroup}.xlsx`,
+                                        'D6:W34',
+                                    );
+                                    const tomorrow = filterDates(schedule);
+                                    return ctx.reply(
+                                        `Завтра ${new Date(tomorrow.date).toLocaleDateString(
+                                            'ru-RU',
+                                        )}\n\nРасписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                        Markup.inlineKeyboard([
+                                            [
+                                                Markup.button.callback(
+                                                    'Предыдущий день',
+                                                    'prev_day',
+                                                ),
+                                                Markup.button.callback(
+                                                    'Следующий день',
+                                                    'next_day',
+                                                ),
+                                            ],
+                                            [
+                                                Markup.button.callback(
+                                                    'Показать календарь',
+                                                    'calendar',
+                                                ),
+                                            ],
+                                        ]),
+                                    );
+                                }
+
                                 const schedule = getRectangleFromExcel(
                                     `../files/${group}.xlsx`,
                                     'D6:W34',
                                 );
-                                const tomorrow = filterDates(schedule)[0];
+                                const tomorrow = filterDates(schedule);
+                                selectedGroup = group;
+                                currentShift = 1;
 
                                 return ctx.reply(
                                     `Завтра ${new Date(tomorrow.date).toLocaleDateString(
                                         'ru-RU',
-                                    )}\n\n
-  Расписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                    )}\n\nРасписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                    Markup.inlineKeyboard([
+                                        [
+                                            Markup.button.callback('Предыдущий день', 'prev_day'),
+                                            Markup.button.callback('Следующий день', 'next_day'),
+                                        ],
+                                        [Markup.button.callback('Показать календарь', 'calendar')],
+                                    ]),
                                 );
                             } catch (e) {
+                                console.log(e);
                                 return ctx.reply(
                                     'Группа, которую ты указал, не найдена. Попробуй еще раз',
                                 );
@@ -228,7 +432,7 @@ async function every20Hour() {
 
     groups.forEach(async (group) => {
         const schedule = getRectangleFromExcel(`../files/${group.group}.xlsx`, 'D6:W34');
-        const tomorrow = filterDates(schedule)[0];
+        const tomorrow = filterDates(schedule);
 
         const sentMessage = await bot.telegram.sendMessage(
             group.chat_id,

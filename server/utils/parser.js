@@ -6,9 +6,7 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
     const sheet_name_list = workbook.SheetNames;
     const worksheet = workbook.Sheets[sheet_name_list[0]];
 
-    const vertices = rectangleVertices.split(':').map(function (vertex) {
-        return XLSX.utils.decode_cell(vertex);
-    });
+    const vertices = rectangleVertices.split(':').map((vertex) => XLSX.utils.decode_cell(vertex));
 
     const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
@@ -58,7 +56,17 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
                     result[realIndex].jobs.push(
                         'Тип занятия: хозяйственный день, дисциплина: хозяйственный день, аудитория: Каз.63',
                     );
-                    realIndex += 1;
+
+                    result[realIndex + 1].date = new Date(
+                        result[realIndex].date.getTime() + 24 * 60 * 60 * 1000,
+                    );
+                    for (let i = 0; i < 4; i += 1) {
+                        result[realIndex + 1].jobs.push(
+                            'Тип занятия: Выходной день, Выходной день, аудитория: Каз.63',
+                        );
+                    }
+
+                    realIndex += 2;
                 }
             } else if (result[realIndex].jobs.length >= 4) realIndex += 1;
         });
@@ -73,9 +81,7 @@ function getRange(fileName, rectangleVertices) {
     const sheet_name_list = workbook.SheetNames;
     const worksheet = workbook.Sheets[sheet_name_list[0]];
 
-    const vertices = rectangleVertices.split(':').map(function (vertex) {
-        return XLSX.utils.decode_cell(vertex);
-    });
+    const vertices = rectangleVertices.split(':').map((vertex) => XLSX.utils.decode_cell(vertex));
 
     const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
