@@ -152,6 +152,89 @@ ${templates.join(' ')}`,
     ),
 );
 
+bot.action('calendar', async (ctx) => {
+    const date = new Date();
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    console.log(firstDay);
+    const buttons = [];
+
+    const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    const months = [
+        'январь',
+        'февраль',
+        'март',
+        'апрель',
+        'май',
+        'июнь',
+        'июль',
+        'август',
+        'сентябрь',
+        'октябрь',
+        'ноябрь',
+        'декабрь',
+    ];
+    for (let i = 0; i < 7; i += 1) {
+        buttons.push(Markup.button.callback(days[i], 'empty'));
+    }
+
+    for (let i = 0; i < firstDay; i += 1) {
+        buttons.push(Markup.button.callback('\u200B', 'empty'));
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+        buttons.push(Markup.button.callback(day.toString(), `day_${day}`));
+    }
+
+    while (buttons.length % 7 !== 0) {
+        buttons.push(Markup.button.callback('\u200B', 'empty'));
+    }
+
+    const rows = [];
+    for (let i = 0; i < buttons.length; i += 7) {
+        rows.push(buttons.slice(i, i + 7));
+    }
+
+    const inlineKeyboard = Markup.inlineKeyboard(rows);
+
+    ctx.answerCbQuery();
+    return ctx.editMessageText(`Вот календарь на ${months[new Date().getMonth()]}`, inlineKeyboard);
+});
+
+bot.action(/day_\d+/, (ctx) => {
+    const day = ctx.match[0].split('_')[1];
+
+    function findCurrentDayInMonth(dates, day) {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        return dates.find((date) => {
+            const currentDate = new Date(date.date);
+
+            const dateDay = currentDate.getDate();
+            const dateMonth = currentDate.getMonth();
+            const dateYear = currentDate.getFullYear();
+
+            return (
+                ~~dateDay === ~~day &&
+                ~~dateMonth === ~~currentMonth &&
+                ~~dateYear === ~~currentYear
+            );
+        });
+    }
+
+    const schedule = getRectangleFromExcel(`../files/611-11.xlsx`, 'D6:W34');
+    const foundDate = findCurrentDayInMonth(schedule, day);
+
+    return ctx.editMessageText(
+        `${new Date(foundDate.date).toLocaleDateString(
+            'ru-RU',
+        )}\n\nРасписание на завтра:\n${foundDate.jobs.join('\n')}`,
+        Markup.inlineKeyboard([[Markup.button.callback('Показать календарь', 'calendar')]]),
+    );
+});
+
 bot.action('prev_day', (ctx) => {
     if (currentShift === 0) currentShift = -1;
     else currentShift -= 1;
@@ -168,6 +251,7 @@ bot.action('prev_day', (ctx) => {
                 Markup.button.callback('Предыдущий день', 'prev_day'),
                 Markup.button.callback('Следующий день', 'next_day'),
             ],
+            [Markup.button.callback('Показать календарь', 'calendar')],
         ]),
     );
 });
@@ -186,6 +270,7 @@ bot.action('next_day', (ctx) => {
                     Markup.button.callback('Предыдущий день', 'prev_day'),
                     Markup.button.callback('Следующий день', 'next_day'),
                 ],
+                [Markup.button.callback('Показать календарь', 'calendar')],
             ]),
         );
     } catch (e) {
@@ -246,6 +331,12 @@ bot.on(message('text'), async (ctx) => {
                                                     'next_day',
                                                 ),
                                             ],
+                                            [
+                                                Markup.button.callback(
+                                                    'Показать календарь',
+                                                    'calendar',
+                                                ),
+                                            ],
                                         ]),
                                     );
                                 }
@@ -267,6 +358,7 @@ bot.on(message('text'), async (ctx) => {
                                             Markup.button.callback('Предыдущий день', 'prev_day'),
                                             Markup.button.callback('Следующий день', 'next_day'),
                                         ],
+                                        [Markup.button.callback('Показать календарь', 'calendar')],
                                     ]),
                                 );
                             } catch (e) {
