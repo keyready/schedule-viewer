@@ -22,7 +22,7 @@ function generateDocument(data, filename) {
 
     doc.render({
         ...data,
-        names: names,
+        names,
         current_month: months.split(' ')[new Date().getMonth()],
     });
 

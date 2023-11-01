@@ -243,7 +243,9 @@ bot.action(/day_\d+/, async (ctx) => {
         return ctx.editMessageText(
             `${new Date(foundDate.date).toLocaleDateString(
                 'ru-RU',
-            )}\n\nРасписание на этот день:\n${foundDate.jobs.join('\n')}`,
+            )}\n\nРасписание на этот день для ${selectedGroup || dbGroup}:\n${foundDate.jobs.join(
+                '\n',
+            )}`,
             Markup.inlineKeyboard([[Markup.button.callback('Показать календарь', 'calendar')]]),
         );
     } catch (e) {
@@ -264,7 +266,7 @@ bot.action('prev_day', (ctx) => {
     return ctx.editMessageText(
         `${new Date(tomorrow.date).toLocaleDateString(
             'ru-RU',
-        )}\n\nРасписание:\n${tomorrow.jobs.join('\n')}`,
+        )}\n\nРасписание для ${selectedGroup}:\n${tomorrow.jobs.join('\n')}`,
         Markup.inlineKeyboard([
             [
                 Markup.button.callback('Предыдущий день', 'prev_day'),
@@ -283,7 +285,7 @@ bot.action('next_day', (ctx) => {
         return ctx.editMessageText(
             `${new Date(tomorrow.date).toLocaleDateString(
                 'ru-RU',
-            )}\n\nРасписание:\n${tomorrow.jobs.join('\n')}`,
+            )}\n\nРасписание для ${selectedGroup}:\n${tomorrow.jobs.join('\n')}`,
             Markup.inlineKeyboard([
                 [
                     Markup.button.callback('Предыдущий день', 'prev_day'),
@@ -338,7 +340,9 @@ bot.on(message('text'), async (ctx) => {
                                     return ctx.reply(
                                         `Завтра ${new Date(tomorrow.date).toLocaleDateString(
                                             'ru-RU',
-                                        )}\n\nРасписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                        )}\n\nРасписание на завтра для ${
+                                            selectedGroup || group
+                                        }:\n${tomorrow.jobs.join('\n')}`,
                                         Markup.inlineKeyboard([
                                             [
                                                 Markup.button.callback(
@@ -371,7 +375,9 @@ bot.on(message('text'), async (ctx) => {
                                 return ctx.reply(
                                     `Завтра ${new Date(tomorrow.date).toLocaleDateString(
                                         'ru-RU',
-                                    )}\n\nРасписание на завтра:\n${tomorrow.jobs.join('\n')}`,
+                                    )}\n\nРасписание на завтра для ${selectedGroup}:\n${tomorrow.jobs.join(
+                                        '\n',
+                                    )}`,
                                     Markup.inlineKeyboard([
                                         [
                                             Markup.button.callback('Предыдущий день', 'prev_day'),
