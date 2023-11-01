@@ -9,6 +9,8 @@ const { generateDocument, filterDates } = require('./utils');
 const { getRectangleFromExcel } = require('../server/utils/parser');
 const { PinnedModel } = require('./models/pinned.model');
 const { UserModel } = require('./models/user.model');
+const { sendMessage } = require('./gigachat/createRequest');
+const { GigachatModel } = require('./models/gigachat.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
@@ -65,6 +67,29 @@ bot.start(async (ctx) => {
             'Попробуй команду `/register_user [группа]`, чтобы я запомнил тебя.\n' +
             'Чтобы не задавать глупые вопросу админу: сразу напиши /help',
     );
+});
+
+bot.command('ask_gigachat', async (ctx) => {
+    const message = ctx.message.text.split(' ').slice(1).join(' ');
+
+    await GigachatModel.create({ role: 'user', content: message });
+
+    const messages = await GigachatModel.findAll({ raw: true });
+
+    for (let i = 0; i < messages.length; i += 1) {
+        delete messages[i].id;
+    }
+
+    const answer = await sendMessage(messages);
+    await GigachatModel.create({ role: 'assistant', content: answer });
+
+    ctx.reply(answer);
+});
+
+bot.command('clear_chat', async (ctx) => {
+    await GigachatModel.destroy({ where: {} });
+
+    ctx.reply('Диалог с гигачатом очищен');
 });
 
 bot.command('register_user', async (ctx) => {
@@ -490,6 +515,7 @@ async function startBot() {
         await DB.sync({ alter: true }).then(() => {
             bot.launch();
         });
+        await GigachatModel.destroy({ where: {} });
     } catch (e) {
         console.log(e);
     }
