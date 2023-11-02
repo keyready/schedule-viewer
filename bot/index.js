@@ -99,6 +99,9 @@ bot.command('clear_chat', async (ctx) => {
 bot.command('refresh_token', async (ctx) => {
     await AccessTokenModel.destroy({ where: {} });
 
+    const token = await getAccessToken();
+    await AccessTokenModel.create({ access_token: token });
+
     ctx.reply('Токен обновлен');
 });
 
