@@ -11,6 +11,8 @@ const { PinnedModel } = require('./models/pinned.model');
 const { UserModel } = require('./models/user.model');
 const { sendMessage } = require('./gigachat/createRequest');
 const { GigachatModel } = require('./models/gigachat.model');
+const { getAccessToken } = require('./gigachat/getAccessToken');
+const { AccessTokenModel } = require('./models/accessToken.model');
 
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
@@ -80,7 +82,9 @@ bot.command('ask_gigachat', async (ctx) => {
         delete messages[i].id;
     }
 
-    const answer = await sendMessage(messages);
+    const tokens = await AccessTokenModel.findAll({ raw: true });
+
+    const answer = await sendMessage(messages, tokens[0].access_token);
     await GigachatModel.create({ role: 'assistant', content: answer });
 
     ctx.reply(answer);
@@ -90,6 +94,12 @@ bot.command('clear_chat', async (ctx) => {
     await GigachatModel.destroy({ where: {} });
 
     ctx.reply('Диалог с гигачатом очищен');
+});
+
+bot.command('refresh_token', async (ctx) => {
+    await AccessTokenModel.destroy({ where: {} });
+
+    ctx.reply('Токен обновлен');
 });
 
 bot.command('register_user', async (ctx) => {
