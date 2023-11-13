@@ -90,6 +90,12 @@ bot.command('ask_gigachat', async (ctx) => {
     ctx.reply(answer);
 });
 
+bot.command('refresh', async (ctx) => {
+    const token = await getAccessToken();
+
+    ctx.reply(token);
+});
+
 bot.command('clear_chat', async (ctx) => {
     await GigachatModel.destroy({ where: {} });
 

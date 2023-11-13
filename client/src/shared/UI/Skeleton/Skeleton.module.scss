@@ -4,7 +4,7 @@
     position: relative;
     box-shadow: 0 2px 10px 0 var(--skeleton-shadow);
     overflow: hidden;
-    outline: 2px solid var(--primary-color);
+    outline: 1px solid var(--primary-color);
 
     &::before {
         width: 80%;

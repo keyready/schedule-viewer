@@ -10,6 +10,7 @@ import { HStack, VStack } from 'shared/UI/Stack';
 import { Button } from 'shared/UI/Button';
 import { useSubjects } from 'entities/Subject';
 import { Input } from 'shared/UI/Input';
+import { Skeleton } from 'shared/UI/Skeleton/Skeleton';
 import classes from './SchedulePage.module.scss';
 
 interface SchedulePageProps {
@@ -50,7 +51,16 @@ const SchedulePage = memo((props: SchedulePageProps) => {
     }, [schedule, searchDate]);
 
     if (!subjects || isSubjectsLoading) {
-        return <h2>привет</h2>;
+        return (
+            <VStack maxW gap="8" className={classes.skeletonsWrapper}>
+                {new Array(10).fill(0).map((_, index) => (
+                    <HStack key={index} maxW gap="16">
+                        <Skeleton width="100%" height="100px" border="10px" />
+                        <Skeleton width="100%" height="100px" border="10px" />
+                    </HStack>
+                ))}
+            </VStack>
+        );
     }
 
     return (
