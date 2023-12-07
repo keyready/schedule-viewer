@@ -71,5 +71,9 @@ export const Flex = (props: FlexProps) => {
         gapClasses[gap],
     ];
 
-    return <div className={classNames(classes.Flex, mods, classesMapper)}>{children}</div>;
+    return (
+        <div {...props} className={classNames(classes.Flex, mods, classesMapper)}>
+            {children}
+        </div>
+    );
 };

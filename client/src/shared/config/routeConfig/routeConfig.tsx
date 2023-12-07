@@ -19,7 +19,7 @@ export enum AppRoutes {
 
 export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.TODAYVIEW]: '/',
-    [AppRoutes.MAIN]: '/schedule',
+    [AppRoutes.MAIN]: '/groups-list',
     [AppRoutes.SCHEDULE]: '/group-schedule',
 
     // last

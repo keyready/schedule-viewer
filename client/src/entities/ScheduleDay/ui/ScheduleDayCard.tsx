@@ -12,6 +12,8 @@ interface ScheduleDayCardProps {
     title: string;
     jobs: string[];
     subjects: Subject[];
+    type?: 'group' | 'day';
+    groupName?: string;
 }
 
 interface IDay {
@@ -21,7 +23,7 @@ interface IDay {
 }
 
 export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
-    const { className, jobs, title, subjects } = props;
+    const { className, jobs, title, subjects, type = 'day', groupName } = props;
 
     const day = useDays(new Date(title), { isLower: true });
 
@@ -40,12 +42,21 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
     }, [jobs]);
 
     return (
-        <VStack maxW className={classNames(classes.ScheduleDayCard, {}, [className])}>
+        <VStack
+            maxW
+            className={classNames(
+                classes.ScheduleDayCard,
+                { [classes.clickable]: type === 'group' },
+                [className],
+            )}
+        >
             <h3 className={classes.title}>
-                {new Date(title).toLocaleDateString('ru-RU')}, {day}
+                {type === 'day'
+                    ? `${new Date(title).toLocaleDateString('ru-RU')}, ${day}`
+                    : `${groupName} учебная группа`}
             </h3>
 
-            <Accordion>
+            <Accordion onClick={(event) => event.stopPropagation()}>
                 {dayData.map((day, index) => (
                     <AccordionTab
                         disabled={
