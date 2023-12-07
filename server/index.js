@@ -41,6 +41,40 @@ app.get('/api/schedule', (req, res) => {
     return res.status(200).json(schedule);
 });
 
+app.get('/api/today', async (req, res) => {
+    const { workDir } = req.query;
+
+    const groupsSchedule = [];
+    let cnt = 0;
+
+    const schedule = fs
+        .readdirSync(path.resolve(__dirname, '../files/'))
+        .filter((file) => !file.includes('~'));
+
+    schedule.forEach((file) => {
+        groupsSchedule.push(
+            getRectangleFromExcel(`${path.resolve(__dirname, '../files/')}/${file}`, 'D6:Z34'),
+        );
+    });
+
+    const result = [];
+    groupsSchedule
+        .map((group) =>
+            group.filter((day) => {
+                const today = new Date().setHours(0, 0, 0, 0);
+                const date = new Date(day.date).setHours(0, 0, 0, 0);
+                return today === date;
+            }),
+        )
+        .map((group) => {
+            group[0].groupName = schedule[cnt].split('.')[0];
+            cnt += 1;
+            return result.push(group[0]);
+        });
+
+    return res.status(200).json(result);
+});
+
 app.listen(port, () => {
     console.log(`Server started on http://localhost:${port}`);
 });
