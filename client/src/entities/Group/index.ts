@@ -7,3 +7,4 @@ export { useGroups } from './api/fetchGroupsApi';
 
 export { GroupCard } from './ui/GroupCard/GroupCard';
 export { GroupList } from './ui/GroupList/GroupList';
+export { CurrentDayGroupCard } from './ui/CurrentDayGroupCard/CurrentDayGroupCard';

@@ -1,6 +1,7 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { memo, useEffect, useMemo } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
+import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useDays } from 'shared/lib/hooks/useDays/useDays';
 import { Disclosure } from 'shared/UI/Disclosure';
 import { Subject } from 'entities/Subject';
@@ -11,6 +12,8 @@ interface ScheduleDayCardProps {
     title: string;
     jobs: string[];
     subjects: Subject[];
+    type?: 'group' | 'day';
+    groupName?: string;
 }
 
 interface IDay {
@@ -20,7 +23,7 @@ interface IDay {
 }
 
 export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
-    const { className, jobs, title, subjects } = props;
+    const { className, jobs, title, subjects, type = 'day', groupName } = props;
 
     const day = useDays(new Date(title), { isLower: true });
 
@@ -29,7 +32,8 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
 
         jobs.forEach((job) => {
             result.push({
-                type: job.split(', ')[0]?.split(': ')[1] || '',
+                type:
+                    job.split(', ')[0]?.split(': ')[1] || job.split(', ')[0]?.split(': ')[0] || '',
                 title: job.split(', ')[1]?.split(': ')[1] || '',
                 classroom: job.split(', ')[2]?.split(': ')[1] || '',
             });
@@ -38,22 +42,50 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
     }, [jobs]);
 
     return (
-        <VStack maxW className={classNames(classes.ScheduleDayCard, {}, [className])}>
+        <VStack
+            maxW
+            className={classNames(
+                classes.ScheduleDayCard,
+                { [classes.clickable]: type === 'group' },
+                [className],
+            )}
+        >
             <h3 className={classes.title}>
-                {new Date(title).toLocaleDateString('ru-RU')}, {day}
+                {type === 'day'
+                    ? `${new Date(title).toLocaleDateString('ru-RU')}, ${day}`
+                    : `${groupName} учебная группа`}
             </h3>
-            {dayData.map((day, index) => (
-                <Disclosure
-                    key={index}
-                    title={
-                        <HStack maxW justify="between">
-                            <p style={{ fontWeight: 'bold' }}>
-                                {day.title.toUpperCase() || day.type.toUpperCase()}
-                            </p>
-                            <p style={{ fontWeight: 'bold' }}>{day.classroom}</p>
-                        </HStack>
-                    }
-                    content={
+
+            <Accordion onClick={(event) => event.stopPropagation()}>
+                {dayData.map((day, index) => (
+                    <AccordionTab
+                        disabled={
+                            day.type.toLowerCase() === 'самоподготовка' ||
+                            day.type.toLowerCase() === 'выходной день' ||
+                            day.type.toLowerCase() === 'хозяйственный день' ||
+                            day.type.toLowerCase() === 'отп'
+                        }
+                        key={index}
+                        header={
+                            <HStack
+                                className={classNames('', {
+                                    [classes.exam]:
+                                        day.type.split('/')[0] === 'Э' ||
+                                        day.type.split('/')[0] === 'ИКС' ||
+                                        day.type.split('/')[0] === 'КУР' ||
+                                        day.type.split('/')[0] === 'КуР' ||
+                                        day.type.split('/')[0] === 'ЗО',
+                                })}
+                                maxW
+                                justify="between"
+                            >
+                                <p style={{ fontWeight: 'bold' }}>
+                                    {day.title.toUpperCase() || day.type.toUpperCase()}
+                                </p>
+                                <p style={{ fontWeight: 'bold' }}>{day.classroom}</p>
+                            </HStack>
+                        }
+                    >
                         <VStack maxW>
                             <h2 className={classes.discTitle}>
                                 {subjects
@@ -92,9 +124,9 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                 </p>
                             </HStack>
                         </VStack>
-                    }
-                />
-            ))}
+                    </AccordionTab>
+                ))}
+            </Accordion>
         </VStack>
     );
 });

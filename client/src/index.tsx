@@ -5,6 +5,7 @@ import { App } from 'app/App';
 import { createRoot } from 'react-dom/client';
 import { StoreProvider } from 'app/providers/StoreProvider';
 import { ErrorBoundary } from 'app/providers/ErrorBoundary';
+import { PrimeReactProvider } from 'primereact/api';
 
 const container = document.getElementById('root');
 if (!container) {
@@ -17,7 +18,9 @@ root.render(
         <StoreProvider>
             <ErrorBoundary>
                 <ThemeProvider>
-                    <App />
+                    <PrimeReactProvider>
+                        <App />
+                    </PrimeReactProvider>
                 </ThemeProvider>
             </ErrorBoundary>
         </StoreProvider>
