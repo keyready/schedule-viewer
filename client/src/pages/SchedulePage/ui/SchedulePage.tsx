@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { useURLParams } from 'shared/url/useSearchParams/useSearchParams';
 import { useNavigate } from 'react-router-dom';
 import { RoutePath } from 'shared/config/routeConfig/routeConfig';
-import { ScheduleDayCard, useSchedule } from 'entities/ScheduleDay';
+import { ScheduleDay, ScheduleDayCard, useSchedule } from 'entities/ScheduleDay';
 import Cookie from 'js-cookie';
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Button } from 'shared/UI/Button';
@@ -25,6 +25,8 @@ const SchedulePage = memo((props: SchedulePageProps) => {
 
     const [isSearchFieldVisible, setIsSearchFieldVisible] = useState<boolean>(false);
     const [searchDate, setSearchDate] = useState<Date>(new Date());
+    const [filteredDays, setFilteredDays] = useState<ScheduleDay[]>([]);
+    const [isFilterEnabled, setIsFilterEnabled] = useState<boolean>(false);
 
     useEffect(() => {
         document.title = `Расписание группы ${getSearchParams()[0]?.value}`;
@@ -46,11 +48,18 @@ const SchedulePage = memo((props: SchedulePageProps) => {
         setIsSearchFieldVisible(!isSearchFieldVisible);
     }, [isSearchFieldVisible]);
     const handleSearchSubmit = useCallback(() => {
-        const sch = schedule?.filter(
-            (day) => day.date && new Date(day.date).getTime() >= new Date(searchDate).getTime(),
+        setFilteredDays(
+            schedule?.filter(
+                (day) => day.date && new Date(day.date).getTime() >= new Date(searchDate).getTime(),
+            ) || [],
         );
-        console.log(sch);
+        setIsFilterEnabled(true);
     }, [schedule, searchDate]);
+
+    const handleClearFilterDaysClick = useCallback(() => {
+        setFilteredDays([]);
+        setIsFilterEnabled(false);
+    }, []);
 
     if (!subjects || isSubjectsLoading) {
         return <h2>привет</h2>;
@@ -65,7 +74,12 @@ const SchedulePage = memo((props: SchedulePageProps) => {
                     {isSearchFieldVisible ? (
                         <HStack maxW className={classes.searchField}>
                             <Datepicker date={searchDate} setDate={setSearchDate} />
-                            <Button onClick={handleSearchSubmit}>Поиск</Button>
+                            <HStack gap="16" maxW justify="end">
+                                <Button onClick={handleClearFilterDaysClick}>
+                                    Сбросить фильтр
+                                </Button>
+                                <Button onClick={handleSearchSubmit}>Поиск</Button>
+                            </HStack>
                         </HStack>
                     ) : (
                         <Button onClick={handleSearchBtnClick}>Поиск</Button>
@@ -73,9 +87,9 @@ const SchedulePage = memo((props: SchedulePageProps) => {
                 </HStack>
             </VStack>
 
-            <div className={classes.grid}>
-                {schedule?.length &&
-                    schedule
+            {schedule?.length && !filteredDays?.length && !isFilterEnabled && (
+                <div className={classes.grid}>
+                    {schedule
                         .filter((day) => new Date(day.date).getTime() >= new Date().getTime())
                         .map((day, index) => (
                             <ScheduleDayCard
@@ -85,7 +99,31 @@ const SchedulePage = memo((props: SchedulePageProps) => {
                                 subjects={subjects}
                             />
                         ))}
-            </div>
+                </div>
+            )}
+
+            {filteredDays?.length ? (
+                <div className={classes.grid}>
+                    {filteredDays
+                        .filter((day) => new Date(day.date).getTime() >= new Date().getTime())
+                        .map((day, index) => (
+                            <ScheduleDayCard
+                                title={day.date.toLocaleString()}
+                                key={index}
+                                jobs={day.jobs}
+                                subjects={subjects}
+                            />
+                        ))}
+                </div>
+            ) : (
+                ''
+            )}
+
+            {isFilterEnabled && !filteredDays?.length && (
+                <HStack maxW className={classes.scheduleEmpty} justify="center">
+                    <h2>Расписание закончилось...</h2>
+                </HStack>
+            )}
         </Page>
     );
 });

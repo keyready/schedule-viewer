@@ -36,7 +36,7 @@ app.get('/api/subjects', (req, res) => {
 app.get('/api/schedule', (req, res) => {
     const { workDir, group } = req.query;
 
-    const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:W34');
+    const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
 
     return res.status(200).json(schedule);
 });
