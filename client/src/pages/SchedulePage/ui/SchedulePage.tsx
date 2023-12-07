@@ -10,6 +10,7 @@ import { HStack, VStack } from 'shared/UI/Stack';
 import { Button } from 'shared/UI/Button';
 import { useSubjects } from 'entities/Subject';
 import { Input } from 'shared/UI/Input';
+import { Datepicker } from 'widgets/Datepicker';
 import classes from './SchedulePage.module.scss';
 
 interface SchedulePageProps {
@@ -23,7 +24,7 @@ const SchedulePage = memo((props: SchedulePageProps) => {
     const navigate = useNavigate();
 
     const [isSearchFieldVisible, setIsSearchFieldVisible] = useState<boolean>(false);
-    const [searchDate, setSearchDate] = useState<string>('');
+    const [searchDate, setSearchDate] = useState<Date>(new Date());
 
     useEffect(() => {
         document.title = `Расписание группы ${getSearchParams()[0]?.value}`;
@@ -45,8 +46,10 @@ const SchedulePage = memo((props: SchedulePageProps) => {
         setIsSearchFieldVisible(!isSearchFieldVisible);
     }, [isSearchFieldVisible]);
     const handleSearchSubmit = useCallback(() => {
-        const sch = schedule?.filter((day) => day.date === new Date(searchDate));
-        console.log(searchDate, 'привет мр');
+        const sch = schedule?.filter(
+            (day) => day.date && new Date(day.date).getTime() >= new Date(searchDate).getTime(),
+        );
+        console.log(sch);
     }, [schedule, searchDate]);
 
     if (!subjects || isSubjectsLoading) {
@@ -59,26 +62,9 @@ const SchedulePage = memo((props: SchedulePageProps) => {
                 <h1 className={classes.title}>{`${getSearchParams()[0].value} группа`}</h1>
 
                 <HStack maxW justify="end">
-                    {/* <VStack maxW justify="between"> */}
-                    {/*    <p>Командир группы: __commander__</p> */}
-                    {/*    <p> */}
-                    {/*        Телефон для связи:{' '} */}
-                    {/*        <a */}
-                    {/*            className={classes.phone} */}
-                    {/*            href="tel: 89990123456" */}
-                    {/*        > */}
-                    {/*            8 999 012 3456 */}
-                    {/*        </a> */}
-                    {/*    </p> */}
-                    {/* </VStack> */}
                     {isSearchFieldVisible ? (
-                        <HStack maxW>
-                            <Input
-                                value={searchDate}
-                                onChange={setSearchDate}
-                                autoFocus
-                                placeholder="Введите дату в формате ДД:ММ:ГГ"
-                            />
+                        <HStack maxW className={classes.searchField}>
+                            <Datepicker date={searchDate} setDate={setSearchDate} />
                             <Button onClick={handleSearchSubmit}>Поиск</Button>
                         </HStack>
                     ) : (
@@ -90,13 +76,7 @@ const SchedulePage = memo((props: SchedulePageProps) => {
             <div className={classes.grid}>
                 {schedule?.length &&
                     schedule
-                        // .filter(
-                        //     (day) =>
-                        //         new Date(day.date).getMonth() ===
-                        //             new Date().getMonth() &&
-                        //         new Date(day.date).getDate() >=
-                        //             new Date().getDate(),
-                        // )
+                        .filter((day) => new Date(day.date).getTime() >= new Date().getTime())
                         .map((day, index) => (
                             <ScheduleDayCard
                                 title={day.date.toLocaleString()}

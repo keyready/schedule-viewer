@@ -6,6 +6,7 @@
     "scripts": {
         "init": "npm i concurrently && concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm run init\" \"cd ./server && npm run init\"",
         "start": "concurrently -n CLIENT,SERVER,BOT -c blue,green,yellow.bold \"cd ./client && npm start\" \"cd ./server && npm start\" \"cd ./bot && npm run dev\"",
+        "start:web": "concurrently -n CLIENT,SERVER -c blue,green \"cd ./client && npm start\" \"cd ./server && npm start\"",
         "start:backend": "concurrently -n SERVER,BOT -c red,blue \"cd ./server && npm start\" \"cd ./bot && npm run dev\"",
         "lint:project": "concurrently -n Prettier,ESlint,Stylelint -c blue,yellow,green \"npm run prettier\" \"npm run lint:ts\" \"npm run lint:scss\"",
         "prettier": "npx prettier --write **/*.{js,jsx,ts,tsx}",
