@@ -2,14 +2,138 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const mongoose = require('mongoose');
+
+/**
+ * GET /api/get_kafs - должно вернуть массив кафедр
+ * GET /api/find_by_kaf?kafId - должно вернуть только те дни,
+ *      в которых есть занятия в аудиториях кафедры kafId
+ */
 
 const { getRectangleFromExcel, getRange } = require('./utils/parser');
+
+const { AudsModel, KafsModel } = require('./models/index');
 
 const app = express();
 const port = 5000;
 
 app.use(express.json());
 app.use(cors());
+
+const start = async () => {
+    await mongoose.connect('mongodb://127.0.0.1:27017/schedule-viewer');
+
+    app.listen(port, () => {
+        console.log(`Server started on http://localhost:${port}`);
+    });
+};
+
+// удаление кафдеры с ее аудиториями или удаление аудитории
+app.delete('/api/delete', async (req, res) => {
+    try {
+        const { audId, kafId } = req.body;
+
+        if (audId) {
+            await AudsModel.deleteOne({ _id: audId });
+            return res.status(200).json({ message: 'Аудитория удалена' });
+        }
+
+        if (kafId) {
+            const wantedKaf = await KafsModel.findOne({ _id: kafId })
+            const wantedAuds = wantedKaf.audsIds;
+
+            for (let i = 0; i <= wantedAuds.length; i += 1) {
+                await AudsModel.deleteOne({ _id: wantedAuds[i] });
+            }
+
+            await KafsModel.deleteOne({ _id: kafId });
+
+            return res.status(200).json({ message: 'Кафедра удалена' });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
+    }
+});
+
+// создание кафедры
+app.post('/api/create_kaf', async (req, res) => {
+    try {
+        const { title } = req.body;
+
+        const createdKaf = KafsModel.create({
+            title,
+        });
+
+        return res.status(201).json(createdKaf);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
+    }
+});
+
+// добавление аудиторий к кафедре по ее id
+app.post('/api/add_auds_to_kaf', async (req, res) => {
+    try {
+        const { audsTitles, parentKafId } = req.body;
+
+        const createdAudsIds = [];
+        for (let i = 0; i < audsTitles.length; i += 1) {
+            const createdAud = await AudsModel.create({ title: audsTitles[i] });
+            createdAudsIds.push(createdAud._id);
+        }
+
+        await KafsModel.updateOne({ _id: parentKafId }, { audsIds: createdAudsIds });
+
+        return res.status(201).json({ message: 'Аудитории созданы и добавлены' });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
+    }
+});
+
+// найти аудитории по id кафедры
+app.get('/api/find_by_kaf', async (req, res) => {
+    // http://localhost:5000/api/find_by_kaf?kafId=kj2niu1nrijwenjkgnsdkjng
+
+    try {
+        const { kafId } = req.query; // { kafId: kj2niu1nrijwenjkgnsdkjng }
+
+        const wantedKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
+        if (!wantedKaf)
+            return res.status(404).json({ message: `Кафедра с ID = ${kafId} не найдена` });
+
+        const wantedAuds = wantedKaf.audsIds;
+        if (!wantedAuds.length)
+            return res
+                .status(404)
+                .json({ message: `За кафедрой с ID = ${kafId} аудитории не закреплены` });
+
+        return res.status(200).json(wantedAuds);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
+    }
+});
+
+// получить список кафедр
+app.get('/api/get_kafs', async (req, res) => {
+    try {
+        const { populate } = req.query;
+
+        let kafs = [];
+
+        if (populate) kafs = await KafsModel.find({}).populate({ path: 'audsIds' });
+        else kafs = await KafsModel.find({});
+
+        if (!kafs.length) return res.status(404).json({ message: 'Кафедры не найдены' });
+
+        return res.status(200).json(kafs);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
+    }
+});
 
 app.get('/api/groups', (req, res) => {
     const { dir } = req.query;
@@ -75,6 +199,4 @@ app.get('/api/today', async (req, res) => {
     return res.status(200).json(result);
 });
 
-app.listen(port, () => {
-    console.log(`Server started on http://localhost:${port}`);
-});
+start();
