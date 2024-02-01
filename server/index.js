@@ -153,39 +153,33 @@ app.get('/api/subjects', (req, res) => {
 });
 
 app.get('/api/schedule', async (req, res) => {
-    /**
-     * тут из параметров нужно взять kafId и отфильтровать дни, в которые есть занятия в аудиториях,
-     * которые закреплены за данной кафедрой
-     */
-    const { workDir, group, kafId } = req.query;
+    try {
+        const { workDir, group, kafId } = req.query;
 
-    const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
-    /**
-     * где-то вот тут можешь сделать console.log(schedule) и посмотреть, что возвращает функция
-     * там все в нормальном виде возвращается, в строчке есть "аудитория: ..."
-     * нужно просто отфильтровать по этой строчке
-     *
-     * подсказка: используй методы массива Array.map() и Array.filter()
-     */
+        const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
 
-    if (kafId) {
-        const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
-        const audsTitle = thisKaf.audsIds.map((aud) => aud.title);
+        if (kafId) {
+            const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
+            const audsTitle = thisKaf.audsIds.map((aud) => aud.title);
 
-        const filteredByKaf = [];
-        for (let i = 0; i < schedule.length; i += 1) {
-            for (let j = 0; j < audsTitle.length; j += 1) {
-                const hello = schedule[i].jobs.map(job => job.includes(audsTitle[j]))
-                if (hello.some(str => str)) {
-                    filteredByKaf.push(schedule[i]);
+            const filteredByKaf = [];
+            for (let i = 0; i < schedule.length; i += 1) {
+                for (let j = 0; j < audsTitle.length; j += 1) {
+                    const hello = schedule[i].jobs.map((job) => job.includes(audsTitle[j]));
+                    if (hello.some((str) => str)) {
+                        filteredByKaf.push(schedule[i]);
+                    }
                 }
             }
+
+            return res.status(200).json(filteredByKaf);
         }
 
-        return res.status(200).json(filteredByKaf);
+        return res.status(200).json(schedule);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
     }
-
-    return res.status(200).json(schedule);
 });
 
 app.get('/api/today', async (req, res) => {
