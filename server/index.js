@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const { getRectangleFromExcel, getRange } = require('./utils/parser');
 
 const { AudsModel, KafsModel } = require('./models/index');
-const kafModel = require('./models/kaf.model');
 
 const app = express();
 const port = 5000;
@@ -191,7 +190,7 @@ app.get('/api/today', async (req, res) => {
     let cnt = 0;
 
     const schedule = fs
-        .readdirSync(path.resolve(__dirname, '../files/'))
+        .readdirSync(path.resolve(__dirname, workDir))
         .filter((file) => !file.includes('~'));
 
     schedule.forEach((file) => {
