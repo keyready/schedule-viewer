@@ -89,8 +89,6 @@ app.post('/api/add_auds_to_kaf', async (req, res) => {
 
 // найти аудитории по id кафедры
 app.get('/api/find_by_kaf', async (req, res) => {
-    // http://localhost:5000/api/find_by_kaf?kafId=kj2niu1nrijwenjkgnsdkjng
-
     try {
         const { kafId } = req.query; // { kafId: kj2niu1nrijwenjkgnsdkjng }
 
