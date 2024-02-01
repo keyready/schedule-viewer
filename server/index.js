@@ -4,15 +4,10 @@ const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-/**
- * GET /api/get_kafs - должно вернуть массив кафедр
- * GET /api/find_by_kaf?kafId - должно вернуть только те дни,
- *      в которых есть занятия в аудиториях кафедры kafId
- */
-
 const { getRectangleFromExcel, getRange } = require('./utils/parser');
 
 const { AudsModel, KafsModel } = require('./models/index');
+const kafModel = require('./models/kaf.model');
 
 const app = express();
 const port = 5000;
@@ -39,7 +34,7 @@ app.delete('/api/delete', async (req, res) => {
         }
 
         if (kafId) {
-            const wantedKaf = await KafsModel.findOne({ _id: kafId })
+            const wantedKaf = await KafsModel.findOne({ _id: kafId });
             const wantedAuds = wantedKaf.audsIds;
 
             for (let i = 0; i <= wantedAuds.length; i += 1) {
@@ -157,10 +152,38 @@ app.get('/api/subjects', (req, res) => {
     return res.status(200).json(subjects);
 });
 
-app.get('/api/schedule', (req, res) => {
-    const { workDir, group } = req.query;
+app.get('/api/schedule', async (req, res) => {
+    /**
+     * тут из параметров нужно взять kafId и отфильтровать дни, в которые есть занятия в аудиториях,
+     * которые закреплены за данной кафедрой
+     */
+    const { workDir, group, kafId } = req.query;
 
     const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
+    /**
+     * где-то вот тут можешь сделать console.log(schedule) и посмотреть, что возвращает функция
+     * там все в нормальном виде возвращается, в строчке есть "аудитория: ..."
+     * нужно просто отфильтровать по этой строчке
+     *
+     * подсказка: используй методы массива Array.map() и Array.filter()
+     */
+
+    if (kafId) {
+        const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
+        const audsTitle = thisKaf.audsIds.map((aud) => aud.title);
+
+        const filteredByKaf = [];
+        for (let i = 0; i < schedule.length; i += 1) {
+            for (let j = 0; j < audsTitle.length; j += 1) {
+                const hello = schedule[i].jobs.map(job => job.includes(audsTitle[j]))
+                if (hello.some(str => str)) {
+                    filteredByKaf.push(schedule[i]);
+                }
+            }
+        }
+
+        return res.status(200).json(filteredByKaf);
+    }
 
     return res.status(200).json(schedule);
 });
