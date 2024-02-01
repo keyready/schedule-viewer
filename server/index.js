@@ -165,7 +165,11 @@ app.get('/api/schedule', async (req, res) => {
             const filteredByKaf = [];
             for (let i = 0; i < schedule.length; i += 1) {
                 for (let j = 0; j < audsTitle.length; j += 1) {
-                    const hello = schedule[i].jobs.map((job) => job.includes(audsTitle[j]));
+                    const hello = schedule[i].jobs.map(
+                        (job) => job.includes(audsTitle[j]) && 
+                        !job.includes('самоподготовка') &&
+                        !job.includes('хозяйственный день'),
+                    );
                     if (hello.some((str) => str)) {
                         filteredByKaf.push(schedule[i]);
                     }
