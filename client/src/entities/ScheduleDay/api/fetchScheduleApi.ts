@@ -14,6 +14,7 @@ const fetchScheduleApi = rtkApi.injectEndpoints({
                 params: {
                     workDir: props.workDir,
                     group: props.group,
+                    kafId: '65bbfd4eea278dd21de69c26'
                 },
             }),
         }),

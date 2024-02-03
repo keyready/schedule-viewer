@@ -4,12 +4,6 @@ const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-/**
- * GET /api/get_kafs - должно вернуть массив кафедр
- * GET /api/find_by_kaf?kafId - должно вернуть только те дни,
- *      в которых есть занятия в аудиториях кафедры kafId
- */
-
 const { getRectangleFromExcel, getRange } = require('./utils/parser');
 
 const { AudsModel, KafsModel } = require('./models/index');
@@ -39,7 +33,7 @@ app.delete('/api/delete', async (req, res) => {
         }
 
         if (kafId) {
-            const wantedKaf = await KafsModel.findOne({ _id: kafId })
+            const wantedKaf = await KafsModel.findOne({ _id: kafId });
             const wantedAuds = wantedKaf.audsIds;
 
             for (let i = 0; i <= wantedAuds.length; i += 1) {
@@ -94,8 +88,6 @@ app.post('/api/add_auds_to_kaf', async (req, res) => {
 
 // найти аудитории по id кафедры
 app.get('/api/find_by_kaf', async (req, res) => {
-    // http://localhost:5000/api/find_by_kaf?kafId=kj2niu1nrijwenjkgnsdkjng
-
     try {
         const { kafId } = req.query; // { kafId: kj2niu1nrijwenjkgnsdkjng }
 
@@ -157,12 +149,38 @@ app.get('/api/subjects', (req, res) => {
     return res.status(200).json(subjects);
 });
 
-app.get('/api/schedule', (req, res) => {
-    const { workDir, group } = req.query;
+app.get('/api/schedule', async (req, res) => {
+    try {
+        const { workDir, group, kafId } = req.query;
 
-    const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
+        const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
 
-    return res.status(200).json(schedule);
+        if (kafId) {
+            const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
+            const audsTitle = thisKaf.audsIds.map((aud) => aud.title);
+
+            const filteredByKaf = [];
+            for (let i = 0; i < schedule.length; i += 1) {
+                for (let j = 0; j < audsTitle.length; j += 1) {
+                    const hello = schedule[i].jobs.map(
+                        (job) => job.includes(audsTitle[j]) && 
+                        !job.includes('самоподготовка') &&
+                        !job.includes('хозяйственный день'),
+                    );
+                    if (hello.some((str) => str)) {
+                        filteredByKaf.push(schedule[i]);
+                    }
+                }
+            }
+
+            return res.status(200).json(filteredByKaf);
+        }
+
+        return res.status(200).json(schedule);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
+    }
 });
 
 app.get('/api/today', async (req, res) => {
@@ -172,7 +190,7 @@ app.get('/api/today', async (req, res) => {
     let cnt = 0;
 
     const schedule = fs
-        .readdirSync(path.resolve(__dirname, '../files/'))
+        .readdirSync(path.resolve(__dirname, workDir))
         .filter((file) => !file.includes('~'));
 
     schedule.forEach((file) => {

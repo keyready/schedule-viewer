@@ -90,11 +90,11 @@ const SchedulePage = memo((props: SchedulePageProps) => {
             {schedule?.length && !filteredDays?.length && !isFilterEnabled && (
                 <div className={classes.grid}>
                     {schedule
-                        .filter(
-                            (day) =>
-                                new Date(day.date).getTime() >=
-                                new Date(new Date().setDate(new Date().getDate() - 1)).getTime(),
-                        )
+                        // .filter(
+                        //     (day) =>
+                        //         new Date(day.date).getTime() >=
+                        //         new Date(new Date().setDate(new Date().getDate() - 1)).getTime(),
+                        // )
                         .map((day, index) => (
                             <ScheduleDayCard
                                 title={day.date.toLocaleString()}
