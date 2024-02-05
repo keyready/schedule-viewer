@@ -13,6 +13,7 @@ const port = 5000;
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.resolve(__dirname, './dist/')));
 
 const start = async () => {
     await mongoose.connect('mongodb://127.0.0.1:27017/schedule-viewer');
@@ -144,7 +145,7 @@ app.get('/api/groups', (req, res) => {
 app.get('/api/subjects', (req, res) => {
     const { group } = req.query;
 
-    const subjects = getRange(`../files/${group}.xlsx`, 'A39:O50');
+    const subjects = getRange(`../files/${group}.xlsx`, 'A39:O51');
 
     return res.status(200).json(subjects);
 });
@@ -163,9 +164,10 @@ app.get('/api/schedule', async (req, res) => {
             for (let i = 0; i < schedule.length; i += 1) {
                 for (let j = 0; j < audsTitle.length; j += 1) {
                     const hello = schedule[i].jobs.map(
-                        (job) => job.includes(audsTitle[j]) && 
-                        !job.includes('самоподготовка') &&
-                        !job.includes('хозяйственный день'),
+                        (job) =>
+                            job.includes(audsTitle[j]) &&
+                            !job.includes('самоподготовка') &&
+                            !job.includes('хозяйственный день'),
                     );
                     if (hello.some((str) => str)) {
                         filteredByKaf.push(schedule[i]);
@@ -216,5 +218,7 @@ app.get('/api/today', async (req, res) => {
 
     return res.status(200).json(result);
 });
+
+app.use('/', (req, res) => res.sendFile(path.resolve(__dirname, './dist/index.html')));
 
 start();

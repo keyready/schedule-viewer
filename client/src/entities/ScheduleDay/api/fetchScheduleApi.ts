@@ -4,6 +4,7 @@ import { ScheduleDay } from 'entities/ScheduleDay';
 interface props {
     workDir: string;
     group: string;
+    kafId: string;
 }
 
 const fetchScheduleApi = rtkApi.injectEndpoints({
@@ -14,7 +15,7 @@ const fetchScheduleApi = rtkApi.injectEndpoints({
                 params: {
                     workDir: props.workDir,
                     group: props.group,
-                    kafId: '65bbfd4eea278dd21de69c26'
+                    kafId: props.kafId,
                 },
             }),
         }),

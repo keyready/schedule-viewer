@@ -2,6 +2,7 @@
 /node_modules
 
 /server/node_modules
+/server/dist
 /files/~$*
 
 /bot/node_modules
