@@ -23,4 +23,3 @@ ___
 
 ___
 - developed by **[Корчак Родион](http://t.me/keyrea_dy)**
-- designed by **[Дмитрий Поляков](http://t.me/operculum)**
