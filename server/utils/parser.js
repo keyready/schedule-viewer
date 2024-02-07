@@ -38,10 +38,12 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
             if (/^\d+$/.test(cell)) {
                 date = new Date((cell - (25567 + 2)) * 86400 * 1000);
                 result[realIndex].date = date;
-            } else if (!cell?.length) {
+            } else if  (cell.includes(`СР`)) {
+                const row = cell.split('\r\n');
                 result[realIndex].jobs.push(
-                    `Тип занятия: самоподготовка, дисциплина: самоподготовка, аудитория: 314-6`,
+                    `Тип занятия: ${row[0]}, дисциплина: ${row[0]}, аудитория: ${row[1]}`,
                 );
+                    
             } else if (cell.includes('\r\n')) {
                 const row = cell.split('\r\n');
                 result[realIndex].jobs.push(
