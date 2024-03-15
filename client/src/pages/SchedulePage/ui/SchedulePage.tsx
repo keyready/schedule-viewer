@@ -67,7 +67,7 @@ const SchedulePage = memo((props: SchedulePageProps) => {
     }, []);
 
     if (!subjects || isSubjectsLoading) {
-        return <h2>привет</h2>;
+        return <h2>Ничего не найдено</h2>;
     }
 
     return (

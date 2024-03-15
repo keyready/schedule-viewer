@@ -1,6 +1,6 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { memo } from 'react';
-import { HStack } from 'shared/UI/Stack';
+import { HStack, VStack } from 'shared/UI/Stack';
 import { AppLink } from 'shared/UI/AppLink';
 import { RoutePath } from 'shared/config/routeConfig/routeConfig';
 import classes from './Navbar.module.scss';
@@ -13,11 +13,16 @@ export const Navbar = memo(({ className }: NavbarProps) => (
     <HStack maxW align="center" className={classNames(classes.Navbar, {}, [className])}>
         <HStack maxW justify="between" gap="32">
             <AppLink to={RoutePath.todayview}>
-                <h2>Расписание занятий 6 факультета</h2>
+                <h3>Расписание занятий 6 факультета</h3>
             </AppLink>
-            <AppLink to={RoutePath.main}>
-                <h2>Список групп</h2>
-            </AppLink>
+            <VStack>
+                <AppLink to={RoutePath.main}>
+                    <h4>Список групп</h4>
+                </AppLink>
+                <AppLink to={RoutePath.managekafs}>
+                    <h4>Управление</h4>
+                </AppLink>
+            </VStack>
         </HStack>
     </HStack>
 ));

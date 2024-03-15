@@ -88,6 +88,17 @@ app.post('/api/add_auds_to_kaf', async (req, res) => {
     }
 });
 
+app.get('/api/fetch_auds', async (req, res) => {
+    try {
+        const auds = await AudsModel.find({}).lean();
+        if (!auds?.length) return res.status(404).json({ message: 'Аудиторий не найдено' });
+        return res.status(200).json(auds);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: 'Непредвиденная ошибка на сервере' });
+    }
+});
+
 // найти аудитории по id кафедры
 app.get('/api/find_by_kaf', async (req, res) => {
     try {

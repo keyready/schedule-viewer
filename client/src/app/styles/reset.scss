@@ -2,7 +2,7 @@ li {
     list-style-type: none;
 }
 
-body, h1, h2, h3, h4, h5, h6, li, ul, button, textarea, p {
+body, h1, h2, h3, h4, h5, h6, li, ul, p {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -16,4 +16,8 @@ body, h1, h2, h3, h4, h5, h6, li, ul, button, textarea, p {
 
 .p-dropdown-item {
     padding: 10px 20px;
+}
+
+.p-divider.p-divider-horizontal::before {
+    border-top: 2px solid var(--primary-color) !important;
 }

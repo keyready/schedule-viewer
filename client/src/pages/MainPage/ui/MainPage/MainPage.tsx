@@ -6,7 +6,7 @@ import { FetchGroupsForm } from '../FetchGroupsForm/FetchGroupsForm';
 import { Loader } from '../Loader/Loader';
 
 const MainPage = () => {
-    const [scheduleDir, setScheduleDir] = useState<string>(Cookie.get('workDir') || '');
+    const [scheduleDir, setScheduleDir] = useState<string>(Cookie.get('workDir') || '../files/');
     const [isGroupsLoading, setIsGroupsLoading] = useState<boolean>(false);
 
     return (
