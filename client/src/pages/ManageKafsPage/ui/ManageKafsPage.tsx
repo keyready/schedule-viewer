@@ -1,14 +1,14 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { Page } from 'widgets/Page/Page';
-import { FormEvent, memo, useCallback, useRef, useState } from 'react';
+import { FormEvent, memo, useCallback, useState } from 'react';
 import { Text } from 'shared/UI/Text';
 import {
-    useCreateKaf,
-    useKafs,
-    useDeleteKaf,
-    useDeleteAud,
-    useCreateAud,
     useAuds,
+    useCreateAud,
+    useCreateKaf,
+    useDeleteAud,
+    useDeleteKaf,
+    useKafs,
 } from 'pages/SchedulePage';
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
@@ -18,7 +18,6 @@ import { Message } from 'primereact/message';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { IKaf } from 'pages/SchedulePage/api/fetchKafsApi';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { Toast } from 'primereact/toast';
 import { Skeleton } from 'primereact/skeleton';
 import classes from './ManageKafsPage.module.scss';
 
@@ -174,6 +173,7 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                         style={{ width: '50%' }}
                     />
                     <Dropdown
+                        style={{ width: '50%' }}
                         value={selectedKaf}
                         onChange={handleSelectedKafChange}
                         options={kafedras}
