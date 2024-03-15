@@ -18,12 +18,11 @@ app.use(express.static(path.resolve(__dirname, './dist/')));
 const start = async () => {
     await mongoose.connect('mongodb://127.0.0.1:27017/schedule-viewer');
     // await mongoose.connect('mongodb://host.docker.internal:27017/schedule-viewer');
-    
+
     app.listen(port, () => {
         console.log(`Server started on http://localhost:${port}`);
     });
 };
-
 
 // удаление кафдеры с ее аудиториями или удаление аудитории
 app.delete('/api/delete', async (req, res) => {
@@ -171,7 +170,11 @@ app.get('/api/schedule', async (req, res) => {
                             !job.includes('самоподготовка') &&
                             !job.includes('хозяйственный день'),
                     );
-                    if (hello.some((str) => str)) {
+
+                    if (
+                        hello.some((str) => str) &&
+                        !filteredByKaf.find((day) => day.date === schedule[i].date)
+                    ) {
                         filteredByKaf.push(schedule[i]);
                     }
                 }
