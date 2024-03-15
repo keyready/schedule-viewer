@@ -19,6 +19,7 @@ import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { IKaf } from 'pages/SchedulePage/api/fetchKafsApi';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
+import { Skeleton } from 'primereact/skeleton';
 import classes from './ManageKafsPage.module.scss';
 
 interface ManageKafsPageProps {
@@ -90,6 +91,12 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                 <Text title="Добавленные кафедры" />
             </Divider>
             <VStack maxW gap="8" className={classes.kafsWrapper}>
+                {isKafsLoading &&
+                    new Array(5)
+                        .fill(0)
+                        .map((_, index) => (
+                            <Skeleton width="100%" height="60px" key={index} borderRadius="8px" />
+                        ))}
                 {kafedras?.length &&
                     !isKafsLoading &&
                     kafedras.map((kaf) => (
@@ -105,6 +112,7 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                             </Button>
                         </HStack>
                     ))}
+                {!isKafsLoading && !kafedras?.length && <Text title="Пока ничего нет" />}
             </VStack>
 
             <form className={classes.form} onSubmit={handleFormSubmit}>
@@ -130,6 +138,12 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                 <Text title="Добавленные аудитории" />
             </Divider>
             <VStack maxW gap="8" className={classes.kafsWrapper}>
+                {isAudsLoading &&
+                    new Array(5)
+                        .fill(0)
+                        .map((_, index) => (
+                            <Skeleton width="100%" height="60px" key={index} borderRadius="8px" />
+                        ))}
                 {auditories?.length &&
                     !isAudsLoading &&
                     auditories.map((aud) => (
@@ -145,6 +159,7 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                             </Button>
                         </HStack>
                     ))}
+                {!isAudsLoading && !auditories?.length && <Text title="Пока ничего нет" />}
             </VStack>
 
             <form className={classes.form} onSubmit={handleAudsFormSubmit}>
@@ -155,7 +170,7 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                         rows={5}
                         value={audTitles}
                         onChange={(e) => setAudTitles(e.target.value)}
-                        placeholder="Введите номера аудитории (по одному номеру на строку)"
+                        placeholder="Введите номера аудитории (по одному на строку)"
                         style={{ width: '50%' }}
                     />
                     <Dropdown
@@ -164,9 +179,11 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                         options={kafedras}
                         optionLabel="title"
                         emptyMessage="Ничего не найдено"
-                        placeholder="Введите кафедру, за которой закреплена аудитория"
+                        placeholder="Введите кафедру, за которой закреплены аудитории"
                     />
-                    <Button disabled={!audTitles?.length || !selectedKaf}>Добавить кафедру</Button>
+                    <Button disabled={!audTitles?.length || !selectedKaf}>
+                        Добавить аудитории
+                    </Button>
                 </VStack>
             </form>
         </Page>
