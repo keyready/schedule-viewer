@@ -16,8 +16,8 @@ app.use(cors());
 app.use(express.static(path.resolve(__dirname, './dist/')));
 
 const start = async () => {
-    await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
-    // await mongoose.connect('mongodb://host.docker.internal:27017/schedule-viewer');
+    // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
+    await mongoose.connect('mongodb://database:27017/schedule-viewer');
 
     app.listen(port, () => {
         console.log(`Server started on http://localhost:${port}`);
@@ -213,7 +213,7 @@ app.get('/api/today', async (req, res) => {
 
     schedule.forEach((file) => {
         groupsSchedule.push(
-            getRectangleFromExcel(`${path.resolve(__dirname, '../files/')}/${file}`, 'D6:Z34'),
+            getRectangleFromExcel(`${path.resolve(__dirname, workDir)}/${file}`, 'D6:Z34'),
         );
     });
 
@@ -235,6 +235,6 @@ app.get('/api/today', async (req, res) => {
     return res.status(200).json(result);
 });
 
-app.use('/', (req, res) => res.sendFile(path.resolve(__dirname, './dist/index.html')));
+app.get('/*', (req, res) => res.sendFile(path.resolve(__dirname, './dist/index.html')));
 
 start();
