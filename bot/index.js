@@ -1,11 +1,10 @@
 const { Telegraf, Markup } = require('telegraf');
 const { message } = require('telegraf/filters');
-const path = require('path');
 const { schedule } = require('node-cron');
 const DB = require('./config/db.connect');
 const { GroupModel } = require('./models/group.model');
 
-const { generateDocument, filterDates } = require('./utils');
+const { filterDates } = require('./utils');
 const { getRectangleFromExcel } = require('../server/utils/parser');
 const { PinnedModel } = require('./models/pinned.model');
 const { UserModel } = require('./models/user.model');
@@ -13,15 +12,9 @@ const { UserModel } = require('./models/user.model');
 const bot = new Telegraf('6948521745:AAFndHaNtRANJ82jrBxU2jzOzh4btw6EFEY');
 
 const keywords = ['бот', 'товарищБот', 'папочка'];
-const commandsList = ['расписание', 'сделай рапорт на хак'];
+const commandsList = ['расписание',];
 const templates = [
     '\n - расписание для [номер группы, например, 611-11]',
-    '\n - сделай рапорт на хак\n' +
-        'Имена: через запятую участники\n' +
-        'Старший: через запятую старшие\n' +
-        'Время начала: строка вида чч:мм дд:мм:гггг\n' +
-        'Время завершения: строка вида чч:мм дд:мм:гггг\n' +
-        'Событие: название_события',
 ];
 let currentShift = 1;
 let selectedGroup = '';
@@ -134,7 +127,6 @@ bot.action('whatcanido', (ctx) =>
     ctx.editMessageText(
         'Я могу пока не много, но уже достаточно, чтобы быть полезным (своему Отечеству). Могу:\n' +
             '- показывать расписание на завтра\n' +
-            '- сделать рапорт на хак\n' +
             '- каждый вечер напоминать тебе, какие завтра пары\n' +
             '- запоминать пользователей и группы, чтобы автоматически показывать расписание без уточнения',
         Markup.inlineKeyboard([[Markup.button.callback('Назад', 'help')]]),
@@ -394,38 +386,6 @@ bot.on(message('text'), async (ctx) => {
                             }
                         }
 
-                        case 1: {
-                            try {
-                                const lines = sentence.split('\n');
-                                const names = lines[1].split('Имена: ')[1].split(', ');
-                                const commander = lines[2].split('Старший: ')[1];
-                                const start_time = lines[3].split('Время начала: ')[1];
-                                const end_time = lines[4].split('Время завершения: ')[1];
-                                const event = lines[5].split('Событие: ')[1];
-                                const raport_name =
-                                    lines[6]?.split('Название файла: ')[1] || `Рапорт на ${event}`;
-
-                                await generateDocument(
-                                    {
-                                        names,
-                                        commander,
-                                        start_time,
-                                        end_time,
-                                        event,
-                                    },
-                                    raport_name,
-                                );
-
-                                return await ctx.replyWithDocument({
-                                    source: path.resolve(__dirname, `./files/${raport_name}.docx`),
-                                });
-                            } catch (e) {
-                                return await ctx.reply(
-                                    'Какая-то ошибка\nПроверь правильность написания команды — это очень важно!',
-                                );
-                            }
-                        }
-
                         default:
                             ctx.reply('Что-то точно произошло...');
                             break;
@@ -482,8 +442,6 @@ async function every20Hour() {
 }
 
 schedule('0 20,21,22 * * *', every20Hour);
-// schedule('*/10 * * * * *', every20Hour);
-schedule('0 * * * *', everyHour);
 
 async function startBot() {
     try {
