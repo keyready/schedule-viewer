@@ -17,11 +17,15 @@ app.use(express.static(path.resolve(__dirname, './dist/')));
 
 const start = async () => {
     // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
-    await mongoose.connect('mongodb://database:27017/schedule-viewer');
+    try { 
+        // await mongoose.connect('mongodb://database:27017/schedule-viewer');
 
-    app.listen(port, () => {
-        console.log(`Server started on http://localhost:${port}`);
-    });
+        app.listen(port, () => {
+            console.log(`Server started on http://localhost:${port}`);
+        });
+    } catch (e) {
+        console.log('Ошибка подключения к БД:', e);
+    }
 };
 
 // удаление кафдеры с ее аудиториями или удаление аудитории
@@ -157,16 +161,18 @@ app.get('/api/groups', (req, res) => {
 app.get('/api/subjects', (req, res) => {
     const { group } = req.query;
 
-    const subjects = getRange(`../files/${group}.xlsx`, 'A39:O51');
+    const subjects = getRange(path.resolve(__dirname, `./files/${group}.xlsx`), 'A39:O60');
 
-    return res.status(200).json(subjects);
+    const filteredSubjects = subjects.filter(s => s.abbr?.length > 1 && s.abbr?.length <= 4)
+
+    return res.status(200).json(filteredSubjects);
 });
 
 app.get('/api/schedule', async (req, res) => {
     try {
         const { workDir, group, kafId } = req.query;
 
-        const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Z34');
+        const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Y34');
 
         if (kafId) {
             const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
@@ -202,37 +208,42 @@ app.get('/api/schedule', async (req, res) => {
 });
 
 app.get('/api/today', async (req, res) => {
-    const { workDir } = req.query;
+    try { 
+        const { workDir } = req.query;
 
-    const groupsSchedule = [];
-    let cnt = 0;
+        const groupsSchedule = [];
+        let cnt = 0;
 
-    const schedule = fs
-        .readdirSync(path.resolve(__dirname, workDir))
-        .filter((file) => !file.includes('~'));
+        const schedule = fs
+            .readdirSync(path.resolve(__dirname, workDir))
+            .filter((file) => !file.includes('~'));
 
-    schedule.forEach((file) => {
-        groupsSchedule.push(
-            getRectangleFromExcel(`${path.resolve(__dirname, workDir)}/${file}`, 'D6:Z34'),
-        );
-    });
-
-    const result = [];
-    groupsSchedule
-        .map((group) =>
-            group.filter((day) => {
-                const today = new Date().setHours(0, 0, 0, 0);
-                const date = new Date(day.date).setHours(0, 0, 0, 0);
-                return today === date;
-            }),
-        )
-        .map((group) => {
-            group[0].groupName = schedule[cnt].split('.')[0];
-            cnt += 1;
-            return result.push(group[0]);
+        schedule.forEach((file) => {
+            groupsSchedule.push(
+                getRectangleFromExcel(`${path.resolve(__dirname, workDir)}/${file}`, 'D6:Y34'),
+            );
         });
 
-    return res.status(200).json(result);
+        const result = [];
+        groupsSchedule
+            .map((group) => { 
+                return group.filter((day) => {
+                    const today = new Date().setHours(0, 0, 0, 0);
+                    const date = new Date(day.date).setHours(0, 0, 0, 0);
+                    return today === date;
+                })
+            })
+            .map((group) => {
+                group[0].groupName = schedule[cnt]?.split('.')[0];
+                cnt += 1;
+                return result.push(group[0]);
+            });
+
+        return res.status(200).json(result);
+    } catch (e) {
+        console.log(e);        
+        return res.status(500).json({message: 'Произошла ошибка'})
+    }
 });
 
 app.get('/*', (req, res) => res.sendFile(path.resolve(__dirname, './dist/index.html')));

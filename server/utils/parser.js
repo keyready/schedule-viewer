@@ -38,13 +38,13 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
             if (/^\d+$/.test(cell)) {
                 date = new Date((cell - (25567 + 2)) * 86400 * 1000);
                 result[realIndex].date = date;
-            } else if  (cell.includes(`СР`)) {
+            } else if  (cell?.includes(`СР`)) {
                 const row = cell.split('\r\n');
                 result[realIndex].jobs.push(
                     `Тип занятия: ${row[0]}, дисциплина: ${row[0]}, аудитория: ${row[1]}`,
                 );
                     
-            } else if (cell.includes('\r\n')) {
+            } else if (cell?.includes('\r\n')) {
                 const row = cell.split('\r\n');
                 result[realIndex].jobs.push(
                     `Тип занятия: ${row[0]}, дисциплина: ${row[1]}, аудитория: ${row[2]}`,
@@ -56,11 +56,11 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
             if (date.getDay() === 6) {
                 if (result[realIndex].jobs.length >= 3) {
                     result[realIndex].jobs.push(
-                        'Тип занятия: хозяйственный день, дисциплина: хозяйственный день, аудитория: Каз.63',
+                        'Тип занятия: хозяйственный день, дисциплина: хозяйственный день, аудитория: Убежище',
                     );
 
                     result[realIndex + 1].date = new Date(
-                        result[realIndex].date.getTime() + 24 * 60 * 60 * 1000,
+                        new Date(result[realIndex].date).getTime() + 24 * 60 * 60 * 1000,
                     );
                     for (let i = 0; i < 4; i += 1) {
                         result[realIndex + 1].jobs.push(
@@ -92,7 +92,7 @@ function getRange(fileName, rectangleVertices) {
     for (let col = vertices[0].c; col <= vertices[1].c; col++) {
         const columnData = [];
         for (let row = vertices[0].r; row <= vertices[1].r; row++) {
-            columnData.push(data[row][col]);
+            columnData.push(data?.[row]?.[col]);
         }
         selectedData.push(columnData);
     }
@@ -110,12 +110,12 @@ function getRange(fileName, rectangleVertices) {
 
     const clearData = str.filter((cell) => cell.length);
     const subjects = [];
-    for (let i = 0; i < clearData[0].length; i++) {
+    for (let i = 0; i < clearData[1]?.length; i++) {
         subjects.push({
             abbr: clearData[0][i],
             title: clearData[1][i],
-            kaf: ~~clearData[2][i],
-            prepod: clearData[3][i],
+            kaf: ~~clearData[3][i],
+            prepod: clearData[4][i],
         });
     }
 

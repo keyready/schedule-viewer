@@ -27,7 +27,7 @@ export function CreateReduxStore(
         reducer:
             // @ts-ignore
             reducerManager.reduce as ReducersMapObject<StateSchema>,
-        devTools: IS_DEV,
+        devTools: false,
         preloadedState: initialState,
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
