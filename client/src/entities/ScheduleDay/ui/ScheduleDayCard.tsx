@@ -1,9 +1,8 @@
 import { classNames } from 'shared/lib/classNames/classNames';
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useDays } from 'shared/lib/hooks/useDays/useDays';
-import { Disclosure } from 'shared/UI/Disclosure';
 import { Subject } from 'entities/Subject';
 import classes from './ScheduleDayCard.module.scss';
 
@@ -30,6 +29,8 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
     const dayData = useMemo<IDay[]>(() => {
         const result: IDay[] = [];
 
+        if (!jobs?.length) return [];
+
         jobs.forEach((job) => {
             result.push({
                 type:
@@ -40,6 +41,21 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
         });
         return result;
     }, [jobs]);
+
+    const isCellDesabled = useCallback((dayType: string, dayTitle: string) => {
+        return [
+            'самоподготовка',
+            'выходной день',
+            'хозяйственный день',
+            'отп',
+            'ср',
+            'умо',
+            'вых',
+            'оп',
+            'тсу',
+            'стаж',
+        ].includes(dayType.toLowerCase() || dayTitle.toLowerCase());
+    }, []);
 
     return (
         <VStack
@@ -59,12 +75,7 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
             <Accordion onClick={(event) => event.stopPropagation()}>
                 {dayData.map((day, index) => (
                     <AccordionTab
-                        disabled={
-                            day.type.toLowerCase() === 'самоподготовка' ||
-                            day.type.toLowerCase() === 'выходной день' ||
-                            day.type.toLowerCase() === 'хозяйственный день' ||
-                            day.type.toLowerCase() === 'отп'
-                        }
+                        disabled={isCellDesabled(day.type, day.title)}
                         key={index}
                         header={
                             <HStack
@@ -80,7 +91,7 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                 justify="between"
                             >
                                 <p style={{ fontWeight: 'bold' }}>
-                                    {day.title.toUpperCase() || day.type.toUpperCase()}
+                                    {day.title?.toUpperCase() || day.type?.toUpperCase()}
                                 </p>
                                 <p style={{ fontWeight: 'bold' }}>{day.classroom}</p>
                             </HStack>
@@ -90,9 +101,10 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                             <h2 className={classes.discTitle}>
                                 {subjects
                                     .filter(
-                                        (sub) => sub.abbr.toUpperCase() === day.title.toUpperCase(),
+                                        (sub) =>
+                                            sub.abbr?.toUpperCase() === day.title?.toUpperCase(),
                                     )[0]
-                                    ?.title.toUpperCase()}
+                                    ?.title?.toUpperCase()}
                             </h2>
                             <HStack maxW justify="between">
                                 <p>{day.type.split('/')[0] === 'П' ? 'Практика' : 'Лекция'}</p>
@@ -105,8 +117,8 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                         subjects
                                             .filter(
                                                 (sub) =>
-                                                    sub.abbr.toUpperCase() ===
-                                                    day.title.toUpperCase(),
+                                                    sub.abbr?.toUpperCase() ===
+                                                    day.title?.toUpperCase(),
                                             )[0]
                                             ?.prepod?.split('; ')[0]
                                     }
@@ -118,7 +130,8 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                     {
                                         subjects.filter(
                                             (sub) =>
-                                                sub.abbr.toUpperCase() === day.title.toUpperCase(),
+                                                sub.abbr?.toUpperCase() ===
+                                                day.title?.toUpperCase(),
                                         )[0]?.kaf
                                     }
                                 </p>

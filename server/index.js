@@ -18,7 +18,7 @@ app.use(express.static(path.resolve(__dirname, './dist/')));
 const start = async () => {
     // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
     try { 
-        await mongoose.connect('mongodb://database:27017/schedule-viewer');
+        await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
 
         app.listen(port, () => {
             console.log(`Server started on http://localhost:${port}`);
@@ -226,15 +226,17 @@ app.get('/api/today', async (req, res) => {
 
         const result = [];
         groupsSchedule
-            .map((group) => { 
-                return group.filter((day) => {
+            .map((group) => group.filter((day) => {
                     const today = new Date().setHours(0, 0, 0, 0);
                     const date = new Date(day.date).setHours(0, 0, 0, 0);
                     return today === date;
-                })
-            })
+                }))
+            .filter(group => !group?.jobs)
             .map((group) => {
-                group[0].groupName = schedule[cnt]?.split('.')[0];
+                group[0] = {
+                    ...group[0],
+                    groupName: schedule[cnt]?.split('.')[0],
+                }
                 cnt += 1;
                 return result.push(group[0]);
             });

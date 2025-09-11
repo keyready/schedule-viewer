@@ -12,9 +12,9 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
 
     const selectedData = [];
 
-    for (let col = vertices[0].c; col <= vertices[1].c; col++) {
+    for (let col = vertices[0].c; col <= vertices[1].c; col += 1) {
         const columnData = [];
-        for (let row = vertices[0].r; row <= vertices[1].r; row++) {
+        for (let row = vertices[0].r; row <= vertices[1].r; row += 1) {
             columnData.push(data[row][col]);
         }
         selectedData.push(columnData);
@@ -23,8 +23,8 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
     const result = [];
     let realIndex = 0;
 
-    for (let i = 0; i < selectedData.length; i++) {
-        for (let j = 0; j < selectedData[i].length; j++) {
+    for (let i = 0; i < selectedData.length; i += 1) {
+        for (let j = 0; j < selectedData[i].length; j += 1) {
             result.push({
                 date: '',
                 jobs: [],
@@ -32,25 +32,51 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
         }
     }
 
-    selectedData.map((column) => {
+    selectedData.forEach((column) => {
         let date = new Date();
-        column.map((cell) => {
+        column.forEach((cell) => {
             if (/^\d+$/.test(cell)) {
                 date = new Date((cell - (25567 + 2)) * 86400 * 1000);
                 result[realIndex].date = date;
-            } else if  (cell?.includes(`СР`)) {
-                const row = cell.split('\r\n');
+            } else if (cell && typeof cell === 'string') {
+                const lines = cell
+                    .split(/\r?\n/)
+                    .map((l) => l.trim())
+                    .filter(Boolean);
+
+                let type;
+                let discipline;
+                let room;
+
+                if (lines.length >= 3) {
+                    type = lines[0];
+                    discipline = lines[1];
+                    room = lines[2];
+                } else {
+                    const firstLine = lines[0];
+
+                    const match = firstLine.match(/^([А-ЯЁ]+(?:\.[А-ЯЁ]+)*)(?:\s+(.*))?$/);
+                    if (!match) {
+                        result[realIndex].jobs.push(cell);
+                        return;
+                    }
+
+                    type = match[1]; // аббревиатура
+                    const rest = match[2] || '';
+
+                    const roomMatch = rest.match(/(\d+[-\s]\d+)/);
+                    if (roomMatch) {
+                        room = roomMatch[1];
+                        discipline = rest.replace(roomMatch[0], '').trim() || type;
+                    } else {
+                        discipline = rest.trim() || type;
+                        room = lines?.length > 1 ? lines[lines.length - 1] : '?';
+                    }
+                }
+
                 result[realIndex].jobs.push(
-                    `Тип занятия: ${row[0]}, дисциплина: ${row[0]}, аудитория: ${row[1]}`,
+                    `Тип занятия: ${type}, дисциплина: ${discipline}, аудитория: ${room}`,
                 );
-                    
-            } else if (cell?.includes('\r\n')) {
-                const row = cell.split('\r\n');
-                result[realIndex].jobs.push(
-                    `Тип занятия: ${row[0]}, дисциплина: ${row[1]}, аудитория: ${row[2]}`,
-                );
-            } else if (/[А-ЯЁёа-я]/.test(cell)) {
-                result[realIndex].jobs.push(cell);
             }
 
             if (date.getDay() === 6) {
@@ -89,28 +115,28 @@ function getRange(fileName, rectangleVertices) {
 
     const selectedData = [];
 
-    for (let col = vertices[0].c; col <= vertices[1].c; col++) {
+    for (let col = vertices[0].c; col <= vertices[1].c; col += 1) {
         const columnData = [];
-        for (let row = vertices[0].r; row <= vertices[1].r; row++) {
+        for (let row = vertices[0].r; row <= vertices[1].r; row += 1) {
             columnData.push(data?.[row]?.[col]);
         }
         selectedData.push(columnData);
     }
 
     const str = [];
-    for (let i = 0; i < selectedData.length; i++) {
+    for (let i = 0; i < selectedData.length; i += 1) {
         str.push([]);
     }
 
-    selectedData.map((column, index) => {
-        column.map((cell) => {
+    selectedData.forEach((column, index) => {
+        column.forEach((cell) => {
             if (cell) str[index].push(cell);
         });
     });
 
     const clearData = str.filter((cell) => cell.length);
     const subjects = [];
-    for (let i = 0; i < clearData[1]?.length; i++) {
+    for (let i = 0; i < clearData[1]?.length; i += 1) {
         subjects.push({
             abbr: clearData[0][i],
             title: clearData[1][i],

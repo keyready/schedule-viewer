@@ -1,0 +1,25 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './app/styles/index.scss';
+import { App } from './app/App';
+import { StoreProvider } from './app/providers/StoreProvider';
+import { ErrorBoundary } from './app/providers/ErrorBoundary';
+import { ThemeProvider } from './app/providers/ThemeProvider';
+import { PrimeReactProvider } from 'primereact/api';
+import { BrowserRouter } from 'react-router';
+
+createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+        <BrowserRouter>
+            <StoreProvider>
+                <ErrorBoundary>
+                    <ThemeProvider>
+                        <PrimeReactProvider>
+                            <App />
+                        </PrimeReactProvider>
+                    </ThemeProvider>
+                </ErrorBoundary>
+            </StoreProvider>
+        </BrowserRouter>
+    </StrictMode>,
+);

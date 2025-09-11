@@ -1,7 +1,7 @@
-import { classNames } from 'shared/lib/classNames/classNames';
-import { useTheme } from 'app/providers/ThemeProvider';
-import { AppRouter } from 'app/providers/AppRouter';
-import { Navbar } from 'widgets/Navbar';
+import { classNames } from '@/shared/lib/classNames/classNames';
+import { useTheme } from '@/app/providers/ThemeProvider';
+import { AppRouter } from '@/app/providers/AppRouter';
+import { Navbar } from '@/widgets/Navbar';
 import { Suspense } from 'react';
 import { ScrollTop } from 'primereact/scrolltop';
 

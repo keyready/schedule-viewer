@@ -6,5 +6,5 @@ export const rtkApi = createApi({
         baseUrl: 'http://localhost:5000/',
         prepareHeaders: (headers: Headers) => headers,
     }),
-    endpoints: (builder) => ({}),
+    endpoints: () => ({}),
 });

@@ -1,16 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths';
-import svgr from 'vite-plugin-svgr';
+import tsconfigPaths from 'vite-tsconfig-paths'
 
-
+// https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tsconfigPaths({ loose: true }), svgr()],
-    server: {
-        port: 3000
+  plugins: [react(), tsconfigPaths()],
+  server: {
+    port: 80,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\//, ''),
+      },
     },
-    esbuild: {
-        target: 'esnext',
-        platform: 'browser',
-    }
+  },
 })

@@ -1,4 +1,4 @@
-import { RouteProps } from 'react-router-dom';
+import { RouteProps } from 'react-router';
 import { MainPage } from 'pages/MainPage';
 import { SchedulePage } from 'pages/SchedulePage';
 import { NotFound } from 'pages/common/NotFound';

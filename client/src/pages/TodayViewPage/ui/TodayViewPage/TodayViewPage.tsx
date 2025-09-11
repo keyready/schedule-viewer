@@ -22,7 +22,7 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
 
     const navigate = useNavigate();
 
-    const { data: currentSchedule, isLoading: isScheduleLoading } = useCurrentDaySchedule({
+    const { data: currentSchedule } = useCurrentDaySchedule({
         workDir: Cookie.get('workDir') || '',
     });
     const day = useDays(new Date(), { isLower: true });

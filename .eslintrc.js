@@ -17,6 +17,7 @@ module.exports = {
         'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.tsx'] }],
         'no-bitwise': 'off',
         'camelcase': 'off',
+        'prefer-destructuring': 'off',
         'no-await-in-loop': 'off',
         'max-len': ['error', { ignoreComments: true, code: 150 }],
         'react-hooks/exhaustive-deps': 'error',

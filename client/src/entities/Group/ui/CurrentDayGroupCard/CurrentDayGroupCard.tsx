@@ -4,6 +4,7 @@ import { ScheduleDay, ScheduleDayCard } from 'entities/ScheduleDay';
 import { VStack } from 'shared/UI/Stack';
 import { useSubjects } from 'entities/Subject';
 import classes from './CurrentDayGroupCard.module.scss';
+import { Loader } from '@/shared/UI/Loader';
 
 interface CurrentDayGroupCardProps {
     className?: string;
@@ -16,6 +17,8 @@ export const CurrentDayGroupCard = memo((props: CurrentDayGroupCardProps) => {
 
     const { data: subjects, isLoading: isSubjectsLoading } = useSubjects(group.groupName || '');
 
+    if (isSubjectsLoading) return <Loader />;
+
     return (
         <VStack
             onClick={onClick}
@@ -23,7 +26,7 @@ export const CurrentDayGroupCard = memo((props: CurrentDayGroupCardProps) => {
             className={classNames(classes.CurrentDayGroupCard, {}, [className])}
         >
             <ScheduleDayCard
-                title={group.date.toLocaleString()}
+                title={group.date?.toLocaleString() || ''}
                 jobs={group.jobs}
                 subjects={subjects || []}
                 type="group"
