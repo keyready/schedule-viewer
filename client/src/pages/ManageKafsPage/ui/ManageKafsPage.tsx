@@ -86,9 +86,8 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
         <Page className={classNames(classes.ManageKafsPage, {}, [className])}>
             <Text size="large" title="Управление кафедрами и аудиториями" />
 
-            <Divider className={classes.divider}>
-                <Text title="Добавленные кафедры" />
-            </Divider>
+            <Divider className={classes.divider} />
+            <Text className={classes.dividerTitle} title="Добавленные кафедры" />
             <VStack maxW gap="8" className={classes.kafsWrapper}>
                 {isKafsLoading &&
                     new Array(5)
@@ -133,9 +132,8 @@ const ManageKafsPage = memo((props: ManageKafsPageProps) => {
                 </VStack>
             </form>
 
-            <Divider className={classes.divider}>
-                <Text title="Добавленные аудитории" />
-            </Divider>
+            <Divider className={classes.divider} />
+            <Text className={classes.dividerTitle} title="Добавленные аудитории" />
             <VStack maxW gap="8" className={classes.kafsWrapper}>
                 {isAudsLoading &&
                     new Array(5)

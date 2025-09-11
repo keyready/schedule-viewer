@@ -1,6 +1,6 @@
 // Урок 35
 
-import { AnyAction, combineReducers, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
+import { combineReducers, Reducer, ReducersMapObject, UnknownAction } from '@reduxjs/toolkit';
 import { MountedReducers, reducerManager, StateSchema, StateSchemaKey } from './StateSchema';
 
 export function createReducerManager(
@@ -15,7 +15,7 @@ export function createReducerManager(
     return {
         getReducerMap: () => reducers,
         getMountedReducers: () => mountedReducers,
-        reduce: (state: StateSchema, action: AnyAction) => {
+        reduce: (state: StateSchema, action: UnknownAction) => {
             if (keysToRemove.length > 0) {
                 state = { ...state };
                 keysToRemove.forEach((key) => {

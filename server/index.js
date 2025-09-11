@@ -17,8 +17,8 @@ app.use(express.static(path.resolve(__dirname, './dist/')));
 
 const start = async () => {
     // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
-    try { 
-        await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
+    try {
+        await mongoose.connect('mongodb://database:27017/schedule-viewer');
 
         app.listen(port, () => {
             console.log(`Server started on http://localhost:${port}`);
@@ -163,7 +163,7 @@ app.get('/api/subjects', (req, res) => {
 
     const subjects = getRange(path.resolve(__dirname, `./files/${group}.xlsx`), 'A39:O60');
 
-    const filteredSubjects = subjects.filter(s => s.abbr?.length > 1 && s.abbr?.length <= 4)
+    const filteredSubjects = subjects.filter((s) => s.abbr?.length > 1 && s.abbr?.length <= 4);
 
     return res.status(200).json(filteredSubjects);
 });
@@ -208,7 +208,7 @@ app.get('/api/schedule', async (req, res) => {
 });
 
 app.get('/api/today', async (req, res) => {
-    try { 
+    try {
         const { workDir } = req.query;
 
         const groupsSchedule = [];
@@ -226,25 +226,27 @@ app.get('/api/today', async (req, res) => {
 
         const result = [];
         groupsSchedule
-            .map((group) => group.filter((day) => {
+            .map((group) =>
+                group.filter((day) => {
                     const today = new Date().setHours(0, 0, 0, 0);
                     const date = new Date(day.date).setHours(0, 0, 0, 0);
                     return today === date;
-                }))
-            .filter(group => !group?.jobs)
+                }),
+            )
+            .filter((group) => !group?.jobs)
             .map((group) => {
                 group[0] = {
                     ...group[0],
                     groupName: schedule[cnt]?.split('.')[0],
-                }
+                };
                 cnt += 1;
                 return result.push(group[0]);
             });
 
         return res.status(200).json(result);
     } catch (e) {
-        console.log(e);        
-        return res.status(500).json({message: 'Произошла ошибка'})
+        console.log(e);
+        return res.status(500).json({ message: 'Произошла ошибка' });
     }
 });
 

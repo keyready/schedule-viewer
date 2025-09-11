@@ -55,7 +55,7 @@ export const Dropdown = (props: DropdownProps) => {
                     static={hover ? isShown : false}
                     className={classNames(classes.items, {}, menuClasses)}
                 >
-                    {items.map((item, index) => {
+                    {items.map((item) => {
                         const content = ({ active }: { active: boolean }) => (
                             <button
                                 className={classNames(classes.item, {

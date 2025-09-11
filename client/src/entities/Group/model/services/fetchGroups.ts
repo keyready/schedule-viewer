@@ -5,7 +5,7 @@ import { Group } from '../types/Group';
 
 export const fetchGroups = createAsyncThunk<Group, string, ThunkConfig<string>>(
     'Group/fetchGroups',
-    async (GroupId, thunkAPI) => {
+    async (_, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {

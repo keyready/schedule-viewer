@@ -4,6 +4,7 @@ import classes from './Icon.module.scss';
 
 interface IconProps {
     className?: string;
+    // @ts-expect-error versions mischecks
     Svg: React.VFC<React.SVGProps<SVGSVGElement>>;
 }
 

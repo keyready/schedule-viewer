@@ -1,5 +1,15 @@
 .divider {
     margin-top: 32px;
+
+    &:before {
+        z-index: 1;
+    }
+}
+
+.dividerTitle {
+   h2 {
+       background: transparent;
+   }
 }
 
 .form {

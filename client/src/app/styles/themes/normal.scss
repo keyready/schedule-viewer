@@ -1,6 +1,6 @@
 :root {
-    --bg-color: #f3f8fc;
-    --inverted-bg-color: #BAE3FF ;
+    --bg-color: linear-gradient(135deg,rgba(255, 249, 231, 1) 0%, rgba(199, 213, 227, 1) 50%);
+    --inverted-bg-color: #0A2C5C ;
 
     // текст
     --primary-color: #000;
@@ -15,6 +15,6 @@
     --skeleton-color: #6fd978;
 
     // card
-    --card-bg: #8ca3c2;
-    --listox-bg: #8ca3c2;
+    --card-bg: #0A2C5C;
+    --listox-bg: #37538a;
 }

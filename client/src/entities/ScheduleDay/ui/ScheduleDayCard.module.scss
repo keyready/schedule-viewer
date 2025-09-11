@@ -2,11 +2,12 @@
     padding: 20px 30px;
     border: 2px solid #000;
     border-radius: 15px;
-    background: var(--card-bg);
+    background: var(--listox-bg);
 }
 
 .title {
     font-weight: bold;
+    color: white !important;
     align-self: center;
 }
 

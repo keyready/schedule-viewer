@@ -1,6 +1,6 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { memo } from 'react';
-import { HStack, VStack } from 'shared/UI/Stack';
+import { HStack } from 'shared/UI/Stack';
 import { AppLink } from 'shared/UI/AppLink';
 import { RoutePath } from 'shared/config/routeConfig/routeConfig';
 import classes from './Navbar.module.scss';
@@ -15,14 +15,14 @@ export const Navbar = memo(({ className }: NavbarProps) => (
             <AppLink to={RoutePath.todayview}>
                 <h3>Расписание занятий 6 факультета</h3>
             </AppLink>
-            <VStack>
+            <HStack>
                 <AppLink to={RoutePath.main}>
                     <h4>Список групп</h4>
                 </AppLink>
                 <AppLink to={RoutePath.managekafs}>
                     <h4>Управление</h4>
                 </AppLink>
-            </VStack>
+            </HStack>
         </HStack>
     </HStack>
 ));

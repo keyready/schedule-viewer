@@ -5,13 +5,12 @@ import { Disclosure as HDisclosure } from '@headlessui/react';
 import classes from './Disclosure.module.scss';
 
 interface DisclosureProps {
-    className?: string;
     title: ReactNode;
     content: ReactNode;
 }
 
 export const Disclosure = memo((props: DisclosureProps) => {
-    const { className, content, title } = props;
+    const { content, title } = props;
 
     return (
         <HDisclosure>
