@@ -8,6 +8,10 @@ body, h1, h2, h3, h4, h5, h6, li, ul, p {
     box-sizing: border-box;
 }
 
+.p-accordion-header-text {
+    font-size: 12px;
+}
+
 .p-accordion-header-link,
 .p-accordion-header-text,
 .p-accordion.p-component {

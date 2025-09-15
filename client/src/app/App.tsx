@@ -4,6 +4,7 @@ import { AppRouter } from '@/app/providers/AppRouter';
 import { Navbar } from '@/widgets/Navbar';
 import { Suspense } from 'react';
 import { ScrollTop } from 'primereact/scrolltop';
+import HashLinkObserver from 'react-hash-link';
 
 export const App = () => {
     const { theme } = useTheme();
@@ -16,6 +17,7 @@ export const App = () => {
                     <AppRouter />
                 </div>
                 <ScrollTop />
+                <HashLinkObserver />
             </Suspense>
         </div>
     );

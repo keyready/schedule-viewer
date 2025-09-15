@@ -107,12 +107,14 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                     ?.title?.toUpperCase()}
                             </h2>
                             <HStack maxW justify="between">
-                                <p>{day.type.split('/')[0] === 'П' ? 'Практика' : 'Лекция'}</p>
-                                <p>{day.type.split('/')[1]}</p>
+                                <p className="text-xs">
+                                    {day.type.split('/')[0] === 'П' ? 'Практика' : 'Лекция'}
+                                </p>
+                                <p className="text-xs">{day.type.split('/')[1]}</p>
                             </HStack>
                             <HStack maxW justify="between">
-                                <p>Преподаватель</p>
-                                <p>
+                                <p className="text-xs">Преподаватель</p>
+                                <p className="text-xs">
                                     {
                                         subjects
                                             .filter(
@@ -125,8 +127,8 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                 </p>
                             </HStack>
                             <HStack maxW justify="between">
-                                <p>Кафедра</p>
-                                <p>
+                                <p className="text-xs">Кафедра</p>
+                                <p className="text-xs">
                                     {
                                         subjects.filter(
                                             (sub) =>

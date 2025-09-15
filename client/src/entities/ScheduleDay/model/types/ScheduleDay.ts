@@ -3,3 +3,5 @@ export interface ScheduleDay {
     jobs: string[];
     groupName?: string;
 }
+
+export type GroupedSchedule = Record<string, ScheduleDay[]>;
