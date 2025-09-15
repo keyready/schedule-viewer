@@ -1,8 +1,11 @@
+@use "sass:meta";
+@use 'reset';
+
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
 @import "primereact/resources/themes/viva-light/theme.css";
-@import 'reset';
-@import './variables/globals';
-@import './themes/normal';
+
+@include meta.load-css('variables/globals');
+@include meta.load-css('themes/normal');
 
 .app,
 .app_modal,

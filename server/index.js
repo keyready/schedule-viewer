@@ -18,7 +18,7 @@ app.use(express.static(path.resolve(__dirname, './dist/')));
 const start = async () => {
     // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
     try {
-        await mongoose.connect('mongodb://database:27017/schedule-viewer');
+        await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
 
         app.listen(port, () => {
             console.log(`Server started on http://localhost:${port}`);
@@ -163,7 +163,7 @@ app.get('/api/subjects', (req, res) => {
 
     const subjects = getRange(path.resolve(__dirname, `./files/${group}.xlsx`), 'A39:O60');
 
-    const filteredSubjects = subjects.filter((s) => s.abbr?.length > 1 && s.abbr?.length <= 4);
+    const filteredSubjects = subjects.filter((s) => s.abbr?.length > 0 && s.abbr?.length <= 4);
 
     return res.status(200).json(filteredSubjects);
 });

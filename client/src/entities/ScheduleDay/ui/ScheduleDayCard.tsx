@@ -42,7 +42,7 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
         return result;
     }, [jobs]);
 
-    const isCellDesabled = useCallback((dayType: string, dayTitle: string) => {
+    const isCellDisabled = useCallback((dayType: string, dayTitle: string) => {
         return [
             'самоподготовка',
             'выходной день',
@@ -75,11 +75,11 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
             <Accordion onClick={(event) => event.stopPropagation()}>
                 {dayData.map((day, index) => (
                     <AccordionTab
-                        disabled={isCellDesabled(day.type, day.title)}
+                        disabled={isCellDisabled(day.type, day.title)}
                         key={index}
                         header={
                             <HStack
-                                className={classNames('', {
+                                className={classNames('!p-3', {
                                     [classes.exam]:
                                         day.type.split('/')[0] === 'Э' ||
                                         day.type.split('/')[0] === 'ИКС' ||
@@ -90,14 +90,14 @@ export const ScheduleDayCard = memo((props: ScheduleDayCardProps) => {
                                 maxW
                                 justify="between"
                             >
-                                <p style={{ fontWeight: 'bold' }}>
+                                <p className="text-bold">
                                     {day.title?.toUpperCase() || day.type?.toUpperCase()}
                                 </p>
-                                <p style={{ fontWeight: 'bold' }}>{day.classroom}</p>
+                                <p className="text-bold">{day.classroom}</p>
                             </HStack>
                         }
                     >
-                        <VStack maxW>
+                        <VStack maxW className="px-4">
                             <h2 className={classes.discTitle}>
                                 {subjects
                                     .filter(

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './app/styles/index.scss';
+import './app/styles/tailwind.css';
 import { App } from './app/App';
 import { StoreProvider } from './app/providers/StoreProvider';
 import { ErrorBoundary } from './app/providers/ErrorBoundary';

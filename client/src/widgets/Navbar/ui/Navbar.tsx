@@ -13,7 +13,7 @@ export const Navbar = memo(({ className }: NavbarProps) => (
     <HStack maxW align="center" className={classNames(classes.Navbar, {}, [className])}>
         <HStack maxW justify="between" gap="32">
             <AppLink to={RoutePath.todayview}>
-                <h3>Расписание занятий 6 факультета</h3>
+                <h3>Расписание на сегодня</h3>
             </AppLink>
             <HStack>
                 <AppLink to={RoutePath.main}>

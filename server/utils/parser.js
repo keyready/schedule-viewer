@@ -128,20 +128,30 @@ function getRange(fileName, rectangleVertices) {
         str.push([]);
     }
 
-    selectedData.forEach((column, index) => {
-        column.forEach((cell) => {
-            if (cell) str[index].push(cell);
+    selectedData
+        .filter((arr) => arr.length > 0 && arr.some((el) => el !== undefined))
+        .forEach((column, index) => {
+            column.forEach((cell) => {
+                str[index].push(cell);
+            });
         });
-    });
 
-    const clearData = str.filter((cell) => cell.length);
+    const rawData = str.filter((cell) => cell.length > 0);
+
+    const disciplinesLength = rawData[1]?.length;
     const subjects = [];
-    for (let i = 0; i < clearData[1]?.length; i += 1) {
+    const parsingResult = [];
+
+    for (let j = 0; j < 7; j += 1) {
+        if (rawData[j]) parsingResult.push(rawData[j]?.slice(0, disciplinesLength));
+    }
+
+    for (let i = 0; i < disciplinesLength - 1; i += 1) {
         subjects.push({
-            abbr: clearData[0][i],
-            title: clearData[1][i],
-            kaf: ~~clearData[3][i],
-            prepod: clearData[4][i],
+            abbr: parsingResult[0][i],
+            title: parsingResult[1][i],
+            kaf: ~~parsingResult[3][i],
+            prepod: parsingResult?.[4]?.[i] || parsingResult?.[6]?.[i] || 'Не указан',
         });
     }
 
