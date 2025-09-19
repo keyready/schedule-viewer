@@ -1,4 +1,12 @@
 services:
+  database:
+    container_name: database
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - custom_network
   server:
     container_name: server
     build: ./server
@@ -9,17 +17,6 @@ services:
       - custom_network
     depends_on:
       - database
-
-  database:
-    container_name: database
-    image: mongo:latest
-    restart: always
-    environment:
-      POSTGRES_DB: schedule-viewer
-    ports:
-      - "27017:27017"
-    networks:
-      - custom_network
 
 networks:
   custom_network:

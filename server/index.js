@@ -9,22 +9,25 @@ const { getRectangleFromExcel, getRange } = require('./utils/parser');
 const { AudsModel, KafsModel } = require('./models/index');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/schedule-viewer';
+const filesDir = process.env.FILES_DIR || path.resolve(__dirname, './files/');
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.resolve(__dirname, './dist/')));
+
+app.get('/healthz', (req, res) => res.status(200).send('ok'));
 
 const start = async () => {
     try {
-        // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
-        await mongoose.connect('mongodb://database:27017/schedule-viewer');
+        await mongoose.connect(mongoUri);
 
         app.listen(port, () => {
             console.log(`Server started on http://localhost:${port}`);
         });
     } catch (e) {
         console.log('Ошибка подключения к БД:', e);
+        process.exit(1);
     }
 };
 
@@ -40,9 +43,10 @@ app.delete('/api/delete', async (req, res) => {
 
         if (kafId) {
             const wantedKaf = await KafsModel.findOne({ _id: kafId });
-            const wantedAuds = wantedKaf.audsIds;
+            if (!wantedKaf) return res.status(404).json({ message: 'Кафедра не найдена' });
+            const wantedAuds = wantedKaf.audsIds || [];
 
-            for (let i = 0; i <= wantedAuds.length; i += 1) {
+            for (let i = 0; i < wantedAuds.length; i += 1) {
                 await AudsModel.deleteOne({ _id: wantedAuds[i] });
             }
 
@@ -50,6 +54,8 @@ app.delete('/api/delete', async (req, res) => {
 
             return res.status(200).json({ message: 'Кафедра удалена' });
         }
+
+        return res.status(400).json({ message: 'Не передан audId или kafId' });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
@@ -61,7 +67,7 @@ app.post('/api/create_kaf', async (req, res) => {
     try {
         const { title } = req.body;
 
-        const createdKaf = KafsModel.create({
+        const createdKaf = await KafsModel.create({
             title,
         });
 
@@ -145,11 +151,12 @@ app.get('/api/get_kafs', async (req, res) => {
 });
 
 app.get('/api/groups', (req, res) => {
-    const { dir } = req.query;
-
     try {
-        const files = fs.readdirSync(dir);
-        const title = files.map((file) => path.basename(file).split('.')[0]);
+        const dirToRead = filesDir;
+        const files = fs.readdirSync(dirToRead);
+        const title = files
+            .filter((file) => file.endsWith('.xlsx') && !file.startsWith('~'))
+            .map((file) => path.basename(file).split('.')[0]);
 
         return res.status(200).json(title);
     } catch (e) {
@@ -161,7 +168,10 @@ app.get('/api/groups', (req, res) => {
 app.get('/api/subjects', (req, res) => {
     const { group } = req.query;
 
-    const subjects = getRange(path.resolve(__dirname, `./files/${group}.xlsx`), 'A39:O60');
+    const safeGroup = path.basename(group || '');
+    const filePath = path.resolve(filesDir, `${safeGroup}.xlsx`);
+
+    const subjects = getRange(filePath, 'A39:O60');
 
     const filteredSubjects = subjects.filter((s) => s.abbr?.length > 0 && s.abbr?.length <= 4);
 
@@ -170,9 +180,12 @@ app.get('/api/subjects', (req, res) => {
 
 app.get('/api/schedule', async (req, res) => {
     try {
-        const { workDir, group, kafId } = req.query;
+        const { group, kafId } = req.query;
 
-        const schedule = getRectangleFromExcel(`${workDir}${group}.xlsx`, 'D6:Y34');
+        const safeGroup = path.basename(group || '');
+        const filePath = path.resolve(filesDir, `${safeGroup}.xlsx`);
+
+        const schedule = getRectangleFromExcel(filePath, 'D6:Y34');
 
         if (kafId) {
             const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
@@ -209,18 +222,18 @@ app.get('/api/schedule', async (req, res) => {
 
 app.get('/api/today', async (req, res) => {
     try {
-        const { workDir, viewedDay } = req.query;
+        const { viewedDay } = req.query;
 
         const groupsSchedule = [];
         let cnt = 0;
 
         const schedule = fs
-            .readdirSync(path.resolve(__dirname, workDir))
-            .filter((file) => !file.includes('~'));
+            .readdirSync(filesDir)
+            .filter((file) => file.endsWith('.xlsx') && !file.includes('~'));
 
         schedule.forEach((file) => {
             groupsSchedule.push(
-                getRectangleFromExcel(`${path.resolve(__dirname, workDir)}/${file}`, 'D6:Y34'),
+                getRectangleFromExcel(path.resolve(filesDir, file), 'D6:Y34'),
             );
         });
 
@@ -249,7 +262,5 @@ app.get('/api/today', async (req, res) => {
         return res.status(500).json({ message: 'Произошла ошибка' });
     }
 });
-
-app.get('/*', (req, res) => res.sendFile(path.resolve(__dirname, './dist/index.html')));
 
 start();

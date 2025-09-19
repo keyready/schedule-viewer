@@ -1,11 +1,15 @@
-FROM node:23.10-alpine
+FROM node:20-alpine
 
 WORKDIR /server
 
 COPY package*.json ./
-RUN npm install -g npm@10.2.3
-RUN npm install --force
+RUN npm ci --only=production || npm ci
+
 COPY . .
 
+ENV NODE_ENV=production \
+    PORT=5000
+
 EXPOSE 5000
-CMD ["npm", "start"]
+
+CMD ["node", "index.js"]
