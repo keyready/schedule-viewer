@@ -7,3 +7,5 @@ export {
     useDeleteAud,
     useDeleteKaf,
 } from './api/fetchKafsApi';
+
+export type { IKaf } from './api/fetchKafsApi';

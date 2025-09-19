@@ -8,17 +8,20 @@ import { ErrorBoundary } from './app/providers/ErrorBoundary';
 import { ThemeProvider } from './app/providers/ThemeProvider';
 import { PrimeReactProvider } from 'primereact/api';
 import { BrowserRouter } from 'react-router';
+import { HeroUIProvider } from '@heroui/react';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <BrowserRouter>
             <StoreProvider>
                 <ErrorBoundary>
-                    <ThemeProvider>
-                        <PrimeReactProvider>
-                            <App />
-                        </PrimeReactProvider>
-                    </ThemeProvider>
+                    <HeroUIProvider>
+                        <ThemeProvider>
+                            <PrimeReactProvider>
+                                <App />
+                            </PrimeReactProvider>
+                        </ThemeProvider>
+                    </HeroUIProvider>
                 </ErrorBoundary>
             </StoreProvider>
         </BrowserRouter>

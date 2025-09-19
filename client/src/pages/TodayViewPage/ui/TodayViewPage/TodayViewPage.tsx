@@ -12,6 +12,8 @@ import classes from './TodayViewPage.module.scss';
 import { AnchorProvider } from '@/shared/lib/hooks/useScrollSpy';
 import { PageNavigation } from 'features/PageNavigation';
 import { Skeleton } from 'primereact/skeleton';
+import { IKaf } from '../../../SchedulePage';
+import { DateValue, parseDate } from '@internationalized/date';
 
 interface TodayViewPageProps {
     className?: string;
@@ -25,7 +27,11 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
     }, []);
 
     const [activeCourse, setActiveCourse] = useState<string | null>('');
-    const [viewedDay, setViewedDay] = useState<Date>(new Date());
+    const [selectedKaf, setSelectedKaf] = useState<IKaf>();
+    const [selectedClassroom, setSelectedClassroom] = useState<IKaf>();
+    const [selectedDate, setSelectedDate] = useState<DateValue | null>(
+        parseDate(new Date().toISOString().split('T')[0]),
+    );
 
     const {
         data: currentSchedule,
@@ -33,13 +39,13 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
         isFetching,
     } = useCurrentDaySchedule({
         workDir: Cookie.get('workDir') || '',
-        day: viewedDay.toISOString(),
+        day: selectedDate?.toString(),
     });
 
     if (isLoading) {
         return (
             <Page className={classNames('flex flex-col', {}, [className])}>
-                <PageTitle viewedDay={viewedDay} setViewedDay={setViewedDay} />
+                <PageTitle viewedDay={selectedDate} setViewedDay={setSelectedDate} />
                 <div className="flex relative gap-4 w-full">
                     <div className="w-54 h-fit sticky top-0 flex flex-col gap-2">
                         <h1 className="text-xl pb-2 font-bold">Навигация</h1>
@@ -68,18 +74,28 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
             ids={currentSchedule ? Object.keys(currentSchedule).map((key) => `course-${key}`) : []}
         >
             <Page className={classNames('flex flex-col', {}, [className])}>
-                <PageTitle viewedDay={viewedDay} setViewedDay={setViewedDay} />
+                <PageTitle viewedDay={selectedDate} setViewedDay={setSelectedDate} />
 
                 <div className="flex gap-4 relative">
                     <PageNavigation
+                        selectedKaf={selectedKaf}
+                        setSelectedKaf={setSelectedKaf}
+                        selectedClassroom={selectedClassroom}
+                        setSelectedClassroom={setSelectedClassroom}
                         currentSchedule={currentSchedule || []}
                         activeCourse={activeCourse}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
                     />
                     <div className="flex w-full flex-col gap-5">
                         {isFetching || isLoading ? (
                             <ScheduleGridLoading />
                         ) : (
-                            <ScheduleGrid currentSchedule={currentSchedule || []} />
+                            <ScheduleGrid
+                                filteredClassroom={selectedClassroom}
+                                filteredLectern={selectedKaf}
+                                currentSchedule={currentSchedule || []}
+                            />
                         )}
                     </div>
                 </div>
