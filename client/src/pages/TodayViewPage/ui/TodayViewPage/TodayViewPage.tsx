@@ -1,6 +1,6 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { Page } from 'widgets/Page/Page';
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import {
     PageTitle,
     ScheduleGrid,
@@ -14,6 +14,9 @@ import { PageNavigation } from 'features/PageNavigation';
 import { Skeleton } from 'primereact/skeleton';
 import { IKaf } from '../../../SchedulePage';
 import { DateValue, parseDate } from '@internationalized/date';
+import { useNavigate } from 'react-router-dom';
+import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
+import { cn } from '@heroui/react';
 
 interface TodayViewPageProps {
     className?: string;
@@ -25,6 +28,8 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
     useEffect(() => {
         document.title = 'Сегодня';
     }, []);
+
+    const navigate = useNavigate();
 
     const [activeCourse, setActiveCourse] = useState<string | null>('');
     const [selectedKaf, setSelectedKaf] = useState<IKaf>();
@@ -41,6 +46,24 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
         workDir: Cookie.get('workDir') || '',
         day: selectedDate?.toString(),
     });
+
+    const handleSettingsPageClick = useCallback(() => {
+        navigate(RoutePath.main);
+    }, [navigate]);
+
+    if (!Cookie.get('workDir'))
+        return (
+            <Page
+                className={classNames('flex items-center justify-center flex-col', {}, [className])}
+            >
+                <h1 className={classes.header}>
+                    Для получения расписание введите путь до директории{' '}
+                    <button className="text-blue-800" onClick={handleSettingsPageClick}>
+                        здесь
+                    </button>
+                </h1>
+            </Page>
+        );
 
     if (isLoading) {
         return (
@@ -63,8 +86,12 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
 
     if (!currentSchedule && !isLoading)
         return (
-            <Page className={classNames('flex flex-col', {}, [className])}>
-                <h1 className={classes.header}>Ошибка получения расписания...</h1>
+            <Page
+                className={classNames('flex items-center justify-center flex-col', {}, [className])}
+            >
+                <h1 className={cn(classes.header, 'text-danger')}>
+                    Ошибка получения расписания...
+                </h1>
             </Page>
         );
 

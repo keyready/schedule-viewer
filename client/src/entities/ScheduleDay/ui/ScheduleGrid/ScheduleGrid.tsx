@@ -59,7 +59,7 @@ export const ScheduleGrid = (props: ScheduleGridProps) => {
                     <motion.div
                         key={`${course}-${filteredDate?.toString()}`}
                         id={`course-${course}`}
-                        className="flex flex-col gap-4"
+                        className="flex flex-col gap-4 mt-10 first:mt-0"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}

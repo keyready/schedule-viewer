@@ -41,60 +41,10 @@ const SchedulePage = memo((props: SchedulePageProps) => {
 
     const { data: subjects } = useSubjects(getSearchParams()[0]?.value || '');
 
-    // const handleSearchBtnClick = useCallback(() => {
-    //     setIsSearchFieldVisible(true);
-    // }, []);
-    // const handleSearchSubmit = useCallback(() => {
-    //     setFilteredDays(
-    //         schedule?.filter(
-    //             (day) => day.date && new Date(day.date).getTime() >= new Date(searchDate).getTime(),
-    //         ) || [],
-    //     );
-    //     setIsFilterEnabled(true);
-    // }, [schedule, searchDate]);
-    //
-    // const handleClearFilterDaysClick = useCallback(() => {
-    //     setFilteredDays([]);
-    //     setIsFilterEnabled(false);
-    //     setElectedKaf(null);
-    // }, []);
-    //
-    // if (!subjects || isSubjectsLoading) {
-    //     return <h2>Ничего не найдено</h2>;
-    // }
-
     return (
         <Page className={classNames(classes.SchedulePage, {}, [className])}>
             <VStack maxW>
                 <h1 className={classes.title}>{`${getSearchParams()[0].value} группа`}</h1>
-
-                {/* TODO needs to be adapted */}
-                {/*<HStack maxW justify="end">*/}
-                {/*    {isSearchFieldVisible ? (*/}
-                {/*        <HStack maxW className={classes.searchField}>*/}
-                {/*            <HStack maxW justify="start">*/}
-                {/*                <Datepicker date={searchDate} setDate={setSearchDate} />*/}
-                {/*                <Dropdown*/}
-                {/*                    options={kafs}*/}
-                {/*                    value={electedKaf}*/}
-                {/*                    onChange={(e: DropdownChangeEvent) => setElectedKaf(e.value)}*/}
-                {/*                    optionLabel="title"*/}
-                {/*                    placeholder="Фильтр по кафедре"*/}
-                {/*                    emptyMessage="Ничего не найдено"*/}
-                {/*                />*/}
-                {/*            </HStack>*/}
-
-                {/*            <HStack gap="16" maxW justify="end">*/}
-                {/*                <Button onClick={handleClearFilterDaysClick}>*/}
-                {/*                    Сбросить фильтр*/}
-                {/*                </Button>*/}
-                {/*                <Button onClick={handleSearchSubmit}>Поиск</Button>*/}
-                {/*            </HStack>*/}
-                {/*        </HStack>*/}
-                {/*    ) : (*/}
-                {/*        <Button onClick={handleSearchBtnClick}>Поиск</Button>*/}
-                {/*    )}*/}
-                {/*</HStack>*/}
             </VStack>
 
             {schedule?.length && !filteredDays?.length && !isFilterEnabled && (

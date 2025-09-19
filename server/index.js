@@ -16,8 +16,8 @@ app.use(cors());
 app.use(express.static(path.resolve(__dirname, './dist/')));
 
 const start = async () => {
-    // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
     try {
+        // await mongoose.connect('mongodb://localhost:27017/schedule-viewer');
         await mongoose.connect('mongodb://database:27017/schedule-viewer');
 
         app.listen(port, () => {
