@@ -92,6 +92,7 @@ const TodayViewPage = memo((props: TodayViewPageProps) => {
                             <ScheduleGridLoading />
                         ) : (
                             <ScheduleGrid
+                                filteredDate={selectedDate}
                                 filteredClassroom={selectedClassroom}
                                 filteredLectern={selectedKaf}
                                 currentSchedule={currentSchedule || []}
