@@ -209,7 +209,7 @@ app.get('/api/schedule', async (req, res) => {
 
 app.get('/api/today', async (req, res) => {
     try {
-        const { workDir } = req.query;
+        const { workDir, viewedDay } = req.query;
 
         const groupsSchedule = [];
         let cnt = 0;
@@ -228,7 +228,7 @@ app.get('/api/today', async (req, res) => {
         groupsSchedule
             .map((group) =>
                 group.filter((day) => {
-                    const today = new Date().setHours(0, 0, 0, 0);
+                    const today = new Date(viewedDay).setHours(0, 0, 0, 0);
                     const date = new Date(day.date).setHours(0, 0, 0, 0);
                     return today === date;
                 }),

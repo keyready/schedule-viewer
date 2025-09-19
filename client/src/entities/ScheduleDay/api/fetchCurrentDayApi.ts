@@ -5,15 +5,17 @@ import { groupScheduleByCourse } from '@/shared/lib/getCourseNumber/getCourseNum
 
 interface props {
     workDir: string;
+    day?: string;
 }
 
 const fetchCurrentDayApi = rtkApi.injectEndpoints({
     endpoints: (build) => ({
         getCurrentDay: build.query<GroupedSchedule, props>({
-            query: (props) => ({
+            query: ({ day, workDir }) => ({
                 url: '/api/today',
                 params: {
-                    workDir: props.workDir,
+                    workDir: workDir,
+                    ...(day ? { viewedDay: day } : undefined),
                 },
             }),
             transformResponse: (response: ScheduleDay[]) => {
