@@ -1,16 +1,64 @@
+import { motion } from 'framer-motion';
 import { Skeleton } from '@heroui/skeleton';
 
 export const ScheduleGridLoading = () => (
-    <div className="w-full">
-        {new Array(3).fill(0).map((_, index) => (
-            <div key={index} className="flex flex-col gap-4">
-                <Skeleton className="w-1/3 h-[50px] rounded-xl" />
+    <motion.div
+        className="w-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+    >
+        {new Array(3).fill(0).map((_, courseIndex) => (
+            <motion.div
+                key={courseIndex}
+                className="flex flex-col gap-4"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                        delay: courseIndex * 0.2,
+                        duration: 0.6,
+                        ease: 'easeOut',
+                    },
+                }}
+            >
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{
+                        opacity: 1,
+                        x: 0,
+                        transition: {
+                            delay: courseIndex * 0.2 + 0.1,
+                            duration: 0.2,
+                            ease: 'easeOut',
+                        },
+                    }}
+                >
+                    <Skeleton className="w-1/3 h-[50px] rounded-xl" />
+                </motion.div>
                 <div className="grid gap-4 grid-cols-3">
-                    {new Array(5).fill(0).map((_, index) => (
-                        <Skeleton key={index} className="w-full h-[220px] rounded-xl" />
+                    {new Array(5).fill(0).map((_, cardIndex) => (
+                        <motion.div
+                            key={cardIndex}
+                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                            animate={{
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                transition: {
+                                    delay: courseIndex * 0.2 + cardIndex * 0.1,
+                                    duration: 0.2,
+                                    ease: 'easeOut',
+                                },
+                            }}
+                        >
+                            <Skeleton className="w-full h-[220px] rounded-xl" />
+                        </motion.div>
                     ))}
                 </div>
-            </div>
+            </motion.div>
         ))}
-    </div>
+    </motion.div>
 );

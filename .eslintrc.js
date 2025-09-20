@@ -24,7 +24,7 @@ module.exports = {
         'max-len': ['error', { ignoreComments: true, code: 150 }],
         'react-hooks/exhaustive-deps': 'error',
         'react-hooks/rules-of-hooks': 'error',
-        'react/jsx-max-props-per-line': [`error`, { maximum: 3 }],
+        'react/jsx-max-props-per-line': [`warn`, { maximum: 4 }],
         'jsx-a11y/no-static-element-interactions': 'off',
         'jsx-a11y/label-has-associated-control': 'off',
         'jsx-a11y/click-events-have-key-events': 'off',

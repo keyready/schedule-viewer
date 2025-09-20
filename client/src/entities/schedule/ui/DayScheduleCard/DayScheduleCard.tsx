@@ -2,6 +2,7 @@
 
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import type { ScheduleDay, ScheduleGroupDay } from '../../model/types/schedule';
 import { useSubjects } from '@/entities/subject';
 
@@ -58,19 +59,57 @@ export const DayScheduleCard = ({ day }: DayScheduleCardProps) => {
 
     if (isSubjectsLoading) {
         return (
-            <div className="w-full p-3 rounded flex flex-col items-center justify-center">
-                <h2 className="font-bold text-center text-2xl">{day.groupName} уч. гр.</h2>
-                <p className="mt-4 text-gray-500">Загрузка расписания...</p>
-            </div>
+            <motion.div
+                className="w-full p-3 rounded flex flex-col items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+            >
+                <motion.h2
+                    className="font-bold text-center text-2xl"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
+                >
+                    {day.groupName} уч. гр.
+                </motion.h2>
+                <motion.p
+                    className="mt-4 text-gray-500"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.3 }}
+                >
+                    Загрузка расписания...
+                </motion.p>
+            </motion.div>
         );
     }
 
     if (!dayData.length) {
         return (
-            <div className="w-full p-3 rounded flex flex-col items-center justify-center">
-                <h2 className="font-bold text-center text-2xl">{day.groupName} уч. гр.</h2>
-                <p className="mt-4 text-gray-500">Нет занятий на этот день</p>
-            </div>
+            <motion.div
+                className="w-full p-3 rounded flex flex-col items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+            >
+                <motion.h2
+                    className="font-bold text-center text-2xl"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
+                >
+                    {day.groupName} уч. гр.
+                </motion.h2>
+                <motion.p
+                    className="mt-4 text-gray-500"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.3 }}
+                >
+                    Нет занятий на этот день
+                </motion.p>
+            </motion.div>
         );
     }
 

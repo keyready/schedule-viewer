@@ -2,10 +2,10 @@
 
 import { useCallback } from 'react';
 import Image from 'next/image';
-import { DayScheduleCard } from '../DayScheduleCard/DayScheduleCard';
 import { GroupedSchedule, ScheduleGroupDay } from '../../model/types/schedule';
 import { Classroom } from '@/entities/classroom';
 import { Lectern } from '@/entities/lectern';
+import { AnimatedCourseSection } from './components';
 import GlassesSmirk from '@/shared/assets/svg/glasses-smirk.svg';
 import CrySmile from '@/shared/assets/svg/cry-smile.svg';
 import FruzzledSmile from '@/shared/assets/svg/fruzzled-smile.svg';
@@ -68,25 +68,15 @@ export const ScheduleList = ({ schedule, lectern, classroom }: ScheduleListProps
         <div className="w-full flex flex-col gap-10">
             {Object.entries(schedule)
                 .reverse()
-                .map(([course, days]) => (
-                    <div key={course} className="flex flex-col gap-4">
-                        <h3 className="text-3xl flex items-center gap-4 font-semibold mb-2">
-                            {renderCourseSmile(course)}
-                            {course} курс
-                        </h3>
-
-                        <div className="w-full grid grid-cols-3 gap-3">
-                            {filteredGroups(days).length ? (
-                                filteredGroups(days).map((day, index) => (
-                                    <DayScheduleCard day={day} key={index} />
-                                ))
-                            ) : (
-                                <div className="col-span-3 ml-10 text-red-800 text-xl">
-                                    На этом курсе нет занятий в выбранной аудитории
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                .map(([course, days], courseIndex) => (
+                    <AnimatedCourseSection
+                        key={course}
+                        course={course}
+                        days={days}
+                        courseIndex={courseIndex}
+                        filteredGroups={filteredGroups(days)}
+                        renderCourseSmile={renderCourseSmile}
+                    />
                 ))}
         </div>
     );
