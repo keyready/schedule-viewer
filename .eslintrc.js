@@ -16,6 +16,8 @@ module.exports = {
     rules: {
         'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.tsx'] }],
         'no-bitwise': 'off',
+        'no-continue': 'off',
+        'no-restricted-syntax': 'off',
         'camelcase': 'off',
         'prefer-destructuring': 'off',
         'no-await-in-loop': 'off',

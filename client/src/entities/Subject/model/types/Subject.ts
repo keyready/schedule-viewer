@@ -1,12 +1,10 @@
 export interface Subject {
     title: string;
     abbr: string;
-    kaf: number;
-    prepod: string;
+    lectern: number;
+    trainer: string;
 }
 
-export interface SubjectSchema {
-    data?: Subject;
-    error?: string;
-    isLoading?: boolean;
+export interface SubjectApiParams {
+    groupNumber: string;
 }

@@ -1,1 +1,2 @@
-export { Input } from 'shared/UI/Input/ui/Input';
+export { Input } from './Input';
+

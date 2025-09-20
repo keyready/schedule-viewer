@@ -82,7 +82,7 @@ function getRectangleFromExcel(fileName, rectangleVertices) {
             if (date.getDay() === 6) {
                 if (result[realIndex].jobs.length >= 3) {
                     result[realIndex].jobs.push(
-                        'Тип занятия: хозяйственный день, дисциплина: хозяйственный день, аудитория: Убежище',
+                        'Тип занятия: хоз. день, дисциплина: хоз. день, аудитория: Убежище',
                     );
 
                     result[realIndex + 1].date = new Date(
@@ -150,8 +150,8 @@ function getRange(fileName, rectangleVertices) {
         subjects.push({
             abbr: parsingResult[0][i],
             title: parsingResult[1][i],
-            kaf: ~~parsingResult[3][i],
-            prepod: parsingResult?.[4]?.[i] || parsingResult?.[6]?.[i] || 'Не указан',
+            lectern: ~~parsingResult[3][i],
+            trainer: parsingResult?.[4]?.[i] || parsingResult?.[6]?.[i] || 'Не указан',
         });
     }
 

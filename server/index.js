@@ -196,7 +196,7 @@ app.get('/api/schedule', async (req, res) => {
                         (job) =>
                             job.includes(audsTitle[j]) &&
                             !job.includes('самоподготовка') &&
-                            !job.includes('хозяйственный день'),
+                            !job.includes('хоз. день'),
                     );
 
                     if (
