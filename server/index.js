@@ -16,8 +16,6 @@ const filesDir = process.env.FILES_DIR || path.resolve(__dirname, './files/');
 app.use(express.json());
 app.use(cors());
 
-app.get('/healthz', (req, res) => res.status(200).send('ok'));
-
 const start = async () => {
     try {
         await mongoose.connect(mongoUri);
@@ -232,9 +230,7 @@ app.get('/api/today', async (req, res) => {
             .filter((file) => file.endsWith('.xlsx') && !file.includes('~'));
 
         schedule.forEach((file) => {
-            groupsSchedule.push(
-                getRectangleFromExcel(path.resolve(filesDir, file), 'D6:Y34'),
-            );
+            groupsSchedule.push(getRectangleFromExcel(path.resolve(filesDir, file), 'D6:Y34'));
         });
 
         const result = [];

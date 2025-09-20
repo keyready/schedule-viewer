@@ -18,7 +18,7 @@ export const fetchGroups = createAsyncThunk<Group, string, ThunkConfig<string>>(
             return response.data;
         } catch (error) {
             const axiosError = error as AxiosError;
-            return rejectWithValue(axiosError.response?.data);
+            return rejectWithValue(axiosError.response?.data as string);
         }
     },
 );

@@ -1,3 +1,9 @@
+if (typeof exports !== 'undefined') {
+    window.exports = exports;
+} else {
+    window.exports = {};
+}
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './app/styles/index.scss';

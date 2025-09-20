@@ -1,8 +1,6 @@
-version: "3.9"
-
 services:
   mongo:
-    image: mongo:7
+    image: mongo:latest
     container_name: schedule-mongo
     restart: unless-stopped
     environment:
@@ -29,6 +27,8 @@ services:
       - ./dist:/server/dist:ro
     expose:
       - "5000"
+    ports:
+      - "5000:5000"
 
   nginx:
     image: nginx:1.27-alpine
