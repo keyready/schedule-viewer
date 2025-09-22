@@ -1,3 +1,4 @@
+import { endOfWeek, isWithinInterval, startOfWeek } from 'date-fns';
 import { ScheduleGroupDay } from '@/entities/schedule';
 
 export function calculateCourse(groupNumber: string) {
@@ -59,3 +60,34 @@ export function groupScheduleByCourse(
     return result;
 }
 
+export function groupByWeeks(days: ScheduleGroupDay[]): ScheduleGroupDay[][] {
+    if (days.length === 0) return [];
+
+    const sorted = [...days].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+
+    const result: ScheduleGroupDay[][] = [];
+
+    let currentWeekStart = startOfWeek(sorted[0].date, { weekStartsOn: 1 }); // понедельник
+    let currentWeekEnd = endOfWeek(sorted[0].date, { weekStartsOn: 1 });
+    let currentWeek: ScheduleGroupDay[] = [];
+
+    for (const day of sorted) {
+        if (isWithinInterval(day.date, { start: currentWeekStart, end: currentWeekEnd })) {
+            currentWeek.push(day);
+        } else {
+            result.push(currentWeek);
+            currentWeek = [day];
+
+            currentWeekStart = startOfWeek(day.date, { weekStartsOn: 1 });
+            currentWeekEnd = endOfWeek(day.date, { weekStartsOn: 1 });
+        }
+    }
+
+    if (currentWeek.length > 0) {
+        result.push(currentWeek);
+    }
+
+    return result.map((day) => day.filter((d) => d.date)).filter((arr) => arr.length);
+}

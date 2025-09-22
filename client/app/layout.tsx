@@ -3,6 +3,7 @@ import { Unbounded } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { HeroUIProvider, QueryProvider } from '@/app/providers';
 import './globals.css';
+import { Navbar } from '@/widgets/Navbar';
 
 const unbounded = Unbounded({
     subsets: ['latin'],
@@ -23,7 +24,10 @@ export default function RootLayout({
         <html lang="ru">
             <body className={unbounded.className}>
                 <QueryProvider>
-                    <HeroUIProvider>{children}</HeroUIProvider>
+                    <HeroUIProvider>
+                        <Navbar />
+                        {children}
+                    </HeroUIProvider>
                 </QueryProvider>
             </body>
         </html>

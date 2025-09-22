@@ -183,33 +183,34 @@ app.get('/api/schedule', async (req, res) => {
         const safeGroup = path.basename(group || '');
         const filePath = path.resolve(filesDir, `${safeGroup}.xlsx`);
 
-        const schedule = getRectangleFromExcel(filePath, 'D6:Y34');
+        let schedule = getRectangleFromExcel(filePath, 'D6:Y34');
+        schedule = schedule.map((day) => ({ ...day, groupName: group }));
 
-        if (kafId) {
-            const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
-            const audsTitle = thisKaf.audsIds.map((aud) => aud.title);
-
-            const filteredByKaf = [];
-            for (let i = 0; i < schedule.length; i += 1) {
-                for (let j = 0; j < audsTitle.length; j += 1) {
-                    const hello = schedule[i].jobs.map(
-                        (job) =>
-                            job.includes(audsTitle[j]) &&
-                            !job.includes('самоподготовка') &&
-                            !job.includes('хоз. день'),
-                    );
-
-                    if (
-                        hello.some((str) => str) &&
-                        !filteredByKaf.find((day) => day.date === schedule[i].date)
-                    ) {
-                        filteredByKaf.push(schedule[i]);
-                    }
-                }
-            }
-
-            return res.status(200).json(filteredByKaf);
-        }
+        // if (kafId) {
+        //     const thisKaf = await KafsModel.findOne({ _id: kafId }).populate({ path: 'audsIds' });
+        //     const audsTitle = thisKaf.audsIds.map((aud) => aud.title);
+        //
+        //     const filteredByKaf = [];
+        //     for (let i = 0; i < schedule.length; i += 1) {
+        //         for (let j = 0; j < audsTitle.length; j += 1) {
+        //             const hello = schedule[i].jobs.map(
+        //                 (job) =>
+        //                     job.includes(audsTitle[j]) &&
+        //                     !job.includes('самоподготовка') &&
+        //                     !job.includes('хоз. день'),
+        //             );
+        //
+        //             if (
+        //                 hello.some((str) => str) &&
+        //                 !filteredByKaf.find((day) => day.date === schedule[i].date)
+        //             ) {
+        //                 filteredByKaf.push(schedule[i]);
+        //             }
+        //         }
+        //     }
+        //
+        //     return res.status(200).json(filteredByKaf);
+        // }
 
         return res.status(200).json(schedule);
     } catch (error) {

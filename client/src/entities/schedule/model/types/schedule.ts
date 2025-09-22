@@ -27,6 +27,10 @@ export interface ScheduleApiParams {
     day?: DateValue | null;
 }
 
+export interface GroupScheduleApiParams {
+    groupName: string;
+}
+
 export interface ScheduleApiResponse {
     data: ScheduleGroupDay[];
 }

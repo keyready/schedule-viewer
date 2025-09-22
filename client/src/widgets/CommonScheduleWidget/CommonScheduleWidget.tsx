@@ -10,7 +10,7 @@ import {
     useScheduleFilters,
 } from '@/entities/schedule';
 
-export const ScheduleWidget = () => {
+export const CommonScheduleWidget = () => {
     const { day, setDay, classroom, setClassroom, lectern, setLectern } = useScheduleFilters();
 
     const { data: schedule, isLoading } = useCurrentDaySchedule({ workDir: '../files/', day });

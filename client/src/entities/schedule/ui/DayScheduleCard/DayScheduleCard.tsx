@@ -3,27 +3,18 @@
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { cn } from '@heroui/theme';
+import Link from 'next/link';
 import type { ScheduleDay, ScheduleGroupDay } from '../../model/types/schedule';
 import { useSubjects } from '@/entities/subject';
-
-const DISABLED_DAY_TYPES = [
-    'самоподготовка',
-    'выходной день',
-    'хоз. день',
-    'отп',
-    'ср',
-    'умо',
-    'вых',
-    'оп',
-    'тсу',
-    'стаж',
-] as const;
+import { DISABLED_DAY_TYPES } from '../../model/consts/daytypes';
 
 interface DayScheduleCardProps {
     day: ScheduleGroupDay;
+    groupView?: boolean;
 }
 
-export const DayScheduleCard = ({ day }: DayScheduleCardProps) => {
+export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps) => {
     const { data: subjects, isLoading: isSubjectsLoading } = useSubjects({
         groupNumber: day.groupName,
     });
@@ -56,6 +47,41 @@ export const DayScheduleCard = ({ day }: DayScheduleCardProps) => {
             ),
         [],
     );
+
+    const renderCardTitle = useMemo(() => {
+        if (groupView) {
+            return (
+                <div className="w-full">
+                    <h2 className="font-bold text-center text-xl">
+                        {new Date(day.date).toLocaleDateString('ru-RU')}
+                        {', '}
+                        {new Date(day.date).toLocaleDateString('ru-RU', {
+                            weekday: 'short',
+                        })}
+                    </h2>
+                </div>
+            );
+        }
+        return (
+            <Link
+                prefetch
+                href={`/group/${day.groupName}#${new Date().toLocaleDateString('ru-RU')}`}
+                className={cn(
+                    'w-full rounded-md cursor-pointer outline-2 outline-transparent',
+                    'flex-row-reverse flex justify-center gap-1 items-center',
+                    'hover:scale-103 duration-200 hover:outline-b-2 hover:outline-nav hover:bg-nav/20',
+                )}
+            >
+                <div className="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        {/* eslint-disable-next-line max-len */}
+                        <path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z" />
+                    </svg>
+                </div>
+                <h2 className="font-bold text-center text-xl">{day.groupName} уч. гр.</h2>
+            </Link>
+        );
+    }, [day.date, day.groupName, groupView]);
 
     if (isSubjectsLoading) {
         return (
@@ -114,10 +140,13 @@ export const DayScheduleCard = ({ day }: DayScheduleCardProps) => {
     }
 
     return (
-        <div className="w-full bg-blue-900/20 h-fit p-3 rounded-lg flex flex-col items-center">
-            <h2 className="font-bold text-center text-xl">{day.groupName} уч. гр.</h2>
+        <div
+            id={new Date(day.date).toLocaleDateString('ru-RU')}
+            className="w-full bg-blue-900/20 h-fit p-3 rounded-lg flex flex-col items-center"
+        >
+            {renderCardTitle}
 
-            <Accordion isCompact className="mt-4 h-fit w-full">
+            <Accordion variant="bordered" isCompact className="mt-4 h-fit w-full">
                 {dayData.map((item, index) => {
                     const subject = subjectMap.get(item.title.toUpperCase());
                     const isDisabled = isCellDisabled(item.type, item.title);

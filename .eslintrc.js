@@ -19,6 +19,7 @@ module.exports = {
         'no-continue': 'off',
         'no-restricted-syntax': 'off',
         'camelcase': 'off',
+        'jsx-a11y/interactive-supports-focus': 'off',
         'prefer-destructuring': 'off',
         'no-await-in-loop': 'off',
         'max-len': ['error', { ignoreComments: true, code: 150 }],

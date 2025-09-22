@@ -29,7 +29,7 @@ export const DatePageTitle = (props: DatePageTitleProps) => {
     }, [viewedDay]);
 
     return (
-        <div className="flex gap-4 w-full justify-center items-center text-4xl font-bold my-10">
+        <div className="flex gap-4 w-full justify-center items-center text-4xl font-bold my-5">
             <button
                 type="button"
                 onClick={() => {

@@ -1,2 +1,0 @@
-export { ScheduleWidget } from './ScheduleWidget';
-
