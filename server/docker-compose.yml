@@ -7,6 +7,40 @@ services:
       - mongo_data:/data/db
     ports:
       - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  mongo-init:
+    image: mongo:latest
+    container_name: schedule-mongo-init
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./backup/dump:/dump
+      - mongo_data:/data/db
+    # mongodump --host localhost:27017 --db schedule-viewer --out ./backup/dump
+    command: >
+      bash -c "
+        echo 'Ожидание готовности MongoDB...' &&
+        until mongosh --host mongo:27017 --eval \"db.adminCommand('ping')\" > /dev/null 2>&1; do
+          sleep 5;
+          echo '... ждём MongoDB ...';
+        done;
+        echo 'MongoDB готов. Начинаем восстановление...';
+        if [ -d /dump/schedule-viewer ]; then
+          mongorestore --host mongo:27017 --db schedule-viewer /dump/schedule-viewer;
+          echo 'Восстановление завершено.';
+        else
+          echo 'Бэкап не найден: /dump/schedule-viewer. Пропускаем восстановление.';
+        fi;
+        echo 'mongo-init завершил работу.';
+      "
+    restart: "no"
 
   server:
     build:
@@ -19,7 +53,10 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/schedule-viewer
       - FILES_DIR=/server/files/
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
+      mongo-init:
+        condition: service_completed_successfully
     volumes:
       - ./files:/server/files:ro
     expose:
