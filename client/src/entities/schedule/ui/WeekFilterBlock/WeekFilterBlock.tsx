@@ -51,29 +51,34 @@ export const WeekFilterBlock = ({ groupName }: { groupName: string }) => {
                         const id = new Date(week[0].date).toLocaleDateString('ru-RU');
 
                         return (
-                            <AnchorLink
+                            <div
                                 key={id}
-                                to={id}
                                 className={cn(
-                                    'flex gap-2 text-sm',
                                     'cursor-pointer rounded px-2 py-1 text-left duration-200',
                                     'hover:bg-nav hover:text-white',
-                                    activeId === id ? 'ml-0 fill-red-500' : 'ml-7 fill-green-400',
                                 )}
                             >
-                                {activeId === id && (
-                                    <div className="h-5 w-5 flex-[1_0_auto]">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24"
-                                            fill="currentcolor"
-                                        >
-                                            <path d="M12 13H4V11H12V4L20 12L12 20V13Z" />
-                                        </svg>
-                                    </div>
-                                )}
-                                {formatDate(start)} — {formatDate(end)}
-                            </AnchorLink>
+                                <AnchorLink
+                                    to={id}
+                                    className={cn(
+                                        'flex gap-2 text-sm',
+                                        activeId === id ? 'ml-0' : 'ml-7',
+                                    )}
+                                >
+                                    {activeId === id && (
+                                        <div className="h-5 w-5 flex-[1_0_auto]">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentcolor"
+                                            >
+                                                <path d="M12 13H4V11H12V4L20 12L12 20V13Z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    {formatDate(start)} — {formatDate(end)}
+                                </AnchorLink>
+                            </div>
                         );
                     })}
                 </div>
