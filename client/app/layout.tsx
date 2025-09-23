@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
-import { Unbounded } from 'next/font/google';
+import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
 import NextTopLoader from 'nextjs-toploader';
 import { HeroUIProvider, QueryProvider } from '@/app/providers';
 import { Navbar } from '@/shared/ui/Navbar';
 import './globals.css';
 
-const unbounded = Unbounded({
-    subsets: ['latin'],
+const unbounded = localFont({
+    src: './fonts/Unbounded-VariableFont_wght.ttf',
+    display: 'swap',
 });
 
 export const metadata: Metadata = {

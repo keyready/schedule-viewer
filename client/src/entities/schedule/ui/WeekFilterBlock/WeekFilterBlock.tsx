@@ -32,7 +32,7 @@ export const WeekFilterBlock = ({ groupName }: { groupName: string }) => {
 
     if (isLoading) {
         return (
-            <div className="sticky top-5 h-80 w-64 rounded-md bg-red-200 p-3">
+            <div className="sticky top-5 h-80 w-64 rounded-md p-3">
                 <p>Загрузка...</p>
             </div>
         );

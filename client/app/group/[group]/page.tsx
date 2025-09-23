@@ -3,7 +3,11 @@ import { groupScheduleKeys, scheduleApi, WeekFilterBlock } from '@/entities/sche
 import { GroupScheduleWidget } from '@/widgets/GroupScheduleWidget';
 import { MovablePageTitle } from '@/shared/ui/MovablePageTitle';
 
-export default async function GroupSchedulePage({ params }: { params: { group: string } }) {
+interface GroupSchedulePageProps {
+    params: Promise<{ group: string }>;
+}
+
+export default async function GroupSchedulePage({ params }: GroupSchedulePageProps) {
     const { group } = await params;
 
     const queryClient = new QueryClient();

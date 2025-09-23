@@ -3,8 +3,6 @@ services:
     image: mongo:latest
     container_name: schedule-mongo
     restart: unless-stopped
-    environment:
-      - MONGO_INITDB_DATABASE=schedule-viewer
     volumes:
       - mongo_data:/data/db
     ports:
@@ -24,23 +22,10 @@ services:
       - mongo
     volumes:
       - ./files:/server/files:ro
-      - ./dist:/server/dist:ro
     expose:
       - "5000"
     ports:
       - "5000:5000"
-
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: schedule-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    depends_on:
-      - server
-    volumes:
-      - ./dist:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
 volumes:
   mongo_data:
