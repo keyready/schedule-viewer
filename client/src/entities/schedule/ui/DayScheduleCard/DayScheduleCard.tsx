@@ -8,6 +8,7 @@ import Link from 'next/link';
 import type { ScheduleDay, ScheduleGroupDay } from '../../model/types/schedule';
 import { useSubjects } from '@/entities/subject';
 import { DISABLED_DAY_TYPES } from '../../model/consts/daytypes';
+import { Subject } from '@/entities/subject/model/types/subject';
 
 interface DayScheduleCardProps {
     day: ScheduleGroupDay;
@@ -33,7 +34,7 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
     }, [day.jobs]);
 
     const subjectMap = useMemo(() => {
-        if (!subjects?.length) return new Map<string, any>();
+        if (!subjects?.length) return new Map<string, Subject>();
         return new Map(subjects.map((sub) => [sub.abbr?.toUpperCase(), sub]));
     }, [subjects]);
 

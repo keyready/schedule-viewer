@@ -72,7 +72,6 @@ export const ScheduleList = ({ schedule, lectern, classroom }: ScheduleListProps
                     <AnimatedCourseSection
                         key={course}
                         course={course}
-                        days={days}
                         courseIndex={courseIndex}
                         filteredGroups={filteredGroups(days)}
                         renderCourseSmile={renderCourseSmile}

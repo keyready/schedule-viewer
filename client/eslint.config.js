@@ -45,7 +45,7 @@ export default defineConfig([
             'no-bitwise': 'off',
             'no-continue': 'off',
             'no-unused-vars': 'warn',
-            'no-return-await': 'warn',
+            'no-return-await': 'off',
             'no-await-in-loop': 'off',
             'no-param-reassign': 'off',
             'import/extensions': 'off',

@@ -34,6 +34,5 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     background: linear-gradient(135deg, rgba(255, 249, 231, 1) 0%, rgba(199, 213, 227, 1) 50%);
-    font-family: Arial, Helvetica, sans-serif;
     scroll-behavior: smooth;
 }

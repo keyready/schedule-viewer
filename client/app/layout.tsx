@@ -3,7 +3,7 @@ import { Unbounded } from 'next/font/google';
 import type { ReactNode } from 'react';
 import NextTopLoader from 'nextjs-toploader';
 import { HeroUIProvider, QueryProvider } from '@/app/providers';
-import { Navbar } from '@/widgets/Navbar';
+import { Navbar } from '@/shared/ui/Navbar';
 import './globals.css';
 
 const unbounded = Unbounded({
@@ -23,6 +23,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ru">
+            <meta name="apple-mobile-web-app-title" content="Раписание" />
             <body className={unbounded.className}>
                 <QueryProvider>
                     <HeroUIProvider>

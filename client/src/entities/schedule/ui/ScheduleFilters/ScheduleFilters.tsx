@@ -3,14 +3,14 @@
 import { DatePicker } from '@heroui/date-picker';
 import { I18nProvider } from '@react-aria/i18n';
 import type { DateValue } from '@internationalized/date';
-import { Autocomplete, AutocompleteItem } from '@heroui/autocomplete';
+import { Autocomplete, AutocompleteItem, AutocompleteSection } from '@heroui/autocomplete';
 import { Dispatch, Key, SetStateAction, useCallback } from 'react';
 import { type Lectern, useLecterns } from '@/entities/lectern';
 import { type Classroom, useClassrooms } from '@/entities/classroom';
 
 interface ScheduleFiltersProps {
     day: DateValue | null;
-    onDayChange: (value: DateValue | null) => void;
+    onDayChange: (_value: DateValue | null) => void;
     setSelectedLectern: Dispatch<SetStateAction<Lectern | null>>;
     setSelectedClassroom: Dispatch<SetStateAction<Classroom | null>>;
     selectedLectern: Lectern | null;
@@ -62,16 +62,30 @@ export const ScheduleFilters = (props: ScheduleFiltersProps) => {
                     {(item) => <AutocompleteItem key={item._id}>{item.title}</AutocompleteItem>}
                 </Autocomplete>
 
-                <Autocomplete
-                    selectedKey={selectedClassroom?._id}
-                    onSelectionChange={handleSelectedClassroomChange}
-                    size="sm"
-                    isLoading={isClassroomsLoading}
-                    defaultItems={classrooms || []}
-                    label="Аудитория"
-                >
-                    {(item) => <AutocompleteItem key={item._id}>{item.title}</AutocompleteItem>}
-                </Autocomplete>
+                {classrooms && lecterns && (
+                    <Autocomplete
+                        selectedKey={selectedClassroom?._id}
+                        onSelectionChange={handleSelectedClassroomChange}
+                        size="sm"
+                        isLoading={isClassroomsLoading}
+                        label="Аудитория"
+                    >
+                        {lecterns.map((lectern) => (
+                            <AutocompleteSection
+                                key={lectern._id}
+                                title={lectern.title.split(' | ')[0] + ' кафедра'}
+                            >
+                                {classrooms
+                                    .filter((classroom) => classroom.kafTitle === lectern.title)
+                                    .map((classroom) => (
+                                        <AutocompleteItem key={classroom._id}>
+                                            {classroom.title}
+                                        </AutocompleteItem>
+                                    ))}
+                            </AutocompleteSection>
+                        ))}
+                    </Autocomplete>
+                )}
 
                 <I18nProvider locale="ru-RU">
                     <DatePicker

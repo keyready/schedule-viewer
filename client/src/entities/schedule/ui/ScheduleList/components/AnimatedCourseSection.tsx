@@ -4,18 +4,17 @@ import type { ScheduleGroupDay } from '../../../model/types/schedule';
 import { AnimatedScheduleCard } from './AnimatedScheduleCard';
 import { AnimatedCourseTitle } from './AnimatedCourseTitle';
 import { AnimatedNoScheduleMessage } from './AnimatedNoScheduleMessage';
+import { ReactNode } from 'react';
 
 interface AnimatedCourseSectionProps {
     course: string;
-    days: ScheduleGroupDay[];
     courseIndex: number;
     filteredGroups: ScheduleGroupDay[];
-    renderCourseSmile: (course: string) => React.ReactNode;
+    renderCourseSmile: (course: string) => ReactNode;
 }
 
 export const AnimatedCourseSection = ({
     course,
-    days,
     courseIndex,
     filteredGroups,
     renderCourseSmile,
