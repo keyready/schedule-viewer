@@ -36,9 +36,9 @@ export const ScheduleGridLoading = () => (
                         },
                     }}
                 >
-                    <Skeleton className="w-1/3 h-[50px] rounded-xl" />
+                    <Skeleton className="h-[50px] w-1/3 rounded-xl" />
                 </motion.div>
-                <div className="grid gap-4 grid-cols-3">
+                <div className="grid grid-cols-3 gap-4">
                     {new Array(5).fill(0).map((_, cardIndex) => (
                         <motion.div
                             key={cardIndex}
@@ -54,7 +54,7 @@ export const ScheduleGridLoading = () => (
                                 },
                             }}
                         >
-                            <Skeleton className="w-full h-[220px] rounded-xl" />
+                            <Skeleton className="h-[220px] w-full rounded-xl" />
                         </motion.div>
                     ))}
                 </div>

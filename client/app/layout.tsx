@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { Unbounded } from 'next/font/google';
 import type { ReactNode } from 'react';
+import NextTopLoader from 'nextjs-toploader';
 import { HeroUIProvider, QueryProvider } from '@/app/providers';
-import './globals.css';
 import { Navbar } from '@/widgets/Navbar';
+import './globals.css';
 
 const unbounded = Unbounded({
     subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function RootLayout({
                 <QueryProvider>
                     <HeroUIProvider>
                         <Navbar />
+                        <NextTopLoader color="#c7d5e3" />
                         {children}
                     </HeroUIProvider>
                 </QueryProvider>

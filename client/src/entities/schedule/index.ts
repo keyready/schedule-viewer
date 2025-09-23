@@ -1,4 +1,4 @@
-export type { ScheduleState, ScheduleDay, ScheduleGroupDay } from './model/types/schedule';
+export type { ScheduleDay, ScheduleGroupDay } from './model/types/schedule';
 export { useScheduleFilters } from './model/hooks/useScheduleFilters';
 
 export { scheduleKeys, useCurrentDaySchedule } from './api/scheduleApi';

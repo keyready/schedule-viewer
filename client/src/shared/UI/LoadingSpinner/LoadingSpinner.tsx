@@ -11,4 +11,3 @@ export const LoadingSpinner = ({ size = 'md', label = 'Загрузка...' }: L
         <p className="mt-2 text-sm text-gray-600">{label}</p>
     </div>
 );
-

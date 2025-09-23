@@ -19,7 +19,7 @@ export const CommonScheduleWidget = () => {
         <div className="flex w-full flex-col items-center justify-center">
             <DatePageTitle viewedDay={day} setViewedDay={setDay} />
 
-            <div className="w-full relative gap-5 flex">
+            <div className="relative flex w-full gap-5">
                 <ScheduleFilters
                     selectedClassroom={classroom}
                     setSelectedClassroom={setClassroom}

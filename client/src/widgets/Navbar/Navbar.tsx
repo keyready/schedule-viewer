@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 export const Navbar = () => (
-    <nav className="px-10 bg-nav h-15 flex items-center justify-start w-full">
-        <Link href="/" className="text-[rgb(199,213,227)] text-lg">
+    <nav className="bg-nav flex h-15 w-full items-center justify-start px-10">
+        <Link href="/" className="text-lg text-[rgb(199,213,227)]">
             Общее расписание
         </Link>
     </nav>

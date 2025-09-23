@@ -52,7 +52,7 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
         if (groupView) {
             return (
                 <div className="w-full">
-                    <h2 className="font-bold text-center text-xl">
+                    <h2 className="text-center text-xl font-bold">
                         {new Date(day.date).toLocaleDateString('ru-RU')}
                         {', '}
                         {new Date(day.date).toLocaleDateString('ru-RU', {
@@ -62,23 +62,24 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
                 </div>
             );
         }
+
         return (
             <Link
                 prefetch
                 href={`/group/${day.groupName}#${new Date().toLocaleDateString('ru-RU')}`}
                 className={cn(
-                    'w-full rounded-md cursor-pointer outline-2 outline-transparent',
-                    'flex-row-reverse flex justify-center gap-1 items-center',
-                    'hover:scale-103 duration-200 hover:outline-b-2 hover:outline-nav hover:bg-nav/20',
+                    'w-full cursor-pointer rounded-md outline-2 outline-transparent',
+                    'flex flex-row-reverse items-center justify-center gap-1',
+                    'hover:outline-b-2 hover:outline-nav hover:bg-nav/20 duration-200 hover:scale-103',
                 )}
             >
-                <div className="w-5 h-5">
+                <div className="h-5 w-5">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         {/* eslint-disable-next-line max-len */}
                         <path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z" />
                     </svg>
                 </div>
-                <h2 className="font-bold text-center text-xl">{day.groupName} уч. гр.</h2>
+                <h2 className="text-center text-xl font-bold">{day.groupName} уч. гр.</h2>
             </Link>
         );
     }, [day.date, day.groupName, groupView]);
@@ -86,13 +87,13 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
     if (isSubjectsLoading) {
         return (
             <motion.div
-                className="w-full p-3 rounded flex flex-col items-center justify-center"
+                className="flex w-full flex-col items-center justify-center rounded p-3"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
             >
                 <motion.h2
-                    className="font-bold text-center text-2xl"
+                    className="text-center text-2xl font-bold"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, duration: 0.3 }}
@@ -114,13 +115,13 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
     if (!dayData.length) {
         return (
             <motion.div
-                className="w-full p-3 rounded flex flex-col items-center justify-center"
+                className="flex w-full flex-col items-center justify-center rounded p-3"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
             >
                 <motion.h2
-                    className="font-bold text-center text-2xl"
+                    className="text-center text-2xl font-bold"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, duration: 0.3 }}
@@ -142,7 +143,7 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
     return (
         <div
             id={new Date(day.date).toLocaleDateString('ru-RU')}
-            className="w-full bg-blue-900/20 h-fit p-3 rounded-lg flex flex-col items-center"
+            className="flex h-fit w-full flex-col items-center rounded-lg bg-blue-900/20 p-3"
         >
             {renderCardTitle}
 
@@ -160,28 +161,30 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
                             isDisabled={isDisabled}
                             aria-label={item.title || item.type}
                             title={
-                                <div className="flex w-full justify-between">
+                                <div className="flex w-full justify-between text-sm">
                                     <span>{(item.title || item.type).toUpperCase()}</span>
                                     <span>{item.classroom}</span>
                                 </div>
                             }
                         >
                             <div className="flex flex-col px-2 py-2">
-                                <h2 className="leading-none text-center text-sm">
+                                <h2 className="text-center text-sm leading-none">
                                     {subject?.title?.toUpperCase() || 'Неизвестный предмет'}
                                 </h2>
 
-                                <div className="flex justify-between text-xs mt-2">
+                                <div className="mt-2 flex justify-between text-xs">
                                     <span>{lessonType}</span>
                                     <span>{group || '—'}</span>
                                 </div>
 
-                                <div className="flex justify-between text-xs mt-1">
+                                <div className="mt-1 flex justify-between gap-3 text-xs">
                                     <span>Преподаватель</span>
-                                    <span>{subject?.trainer?.split('; ')[0] || '—'}</span>
+                                    <span className="truncate">
+                                        {subject?.trainer?.split('; ')[0] || '—'}
+                                    </span>
                                 </div>
 
-                                <div className="flex justify-between text-xs mt-1">
+                                <div className="mt-1 flex justify-between text-xs">
                                     <span>Кафедра</span>
                                     <span>{subject?.lectern || '—'}</span>
                                 </div>

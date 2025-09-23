@@ -32,7 +32,7 @@ export const WeekFilterBlock = ({ groupName }: { groupName: string }) => {
 
     if (isLoading) {
         return (
-            <div className="p-3 rounded-md w-64 h-80 bg-red-200 sticky top-5">
+            <div className="sticky top-5 h-80 w-64 rounded-md bg-red-200 p-3">
                 <p>Загрузка...</p>
             </div>
         );
@@ -40,9 +40,9 @@ export const WeekFilterBlock = ({ groupName }: { groupName: string }) => {
 
     return (
         <AnchorProvider ids={ids} onActiveChange={setActiveId}>
-            <div className="p-3 rounded-md w-72 h-fit sticky top-5 overflow-y-auto">
-                <h1 className="text-xl pb-3 font-bold">Недели</h1>
-                <div className="overflow-auto h-72 flex flex-col gap-2">
+            <div className="sticky top-5 h-fit w-1/4 overflow-y-auto rounded-md p-3">
+                <h1 className="pb-3 text-xl font-bold">Недели</h1>
+                <div className="flex h-72 flex-col gap-2 overflow-auto">
                     {weeks.map((week) => {
                         if (!week.length) return null;
 
@@ -56,13 +56,13 @@ export const WeekFilterBlock = ({ groupName }: { groupName: string }) => {
                                 to={id}
                                 className={cn(
                                     'flex gap-2 text-sm',
-                                    'cursor-pointer text-left px-2 py-1 rounded duration-200',
+                                    'cursor-pointer rounded px-2 py-1 text-left duration-200',
                                     'hover:bg-nav hover:text-white',
                                     activeId === id ? 'ml-0 fill-red-500' : 'ml-7 fill-green-400',
                                 )}
                             >
                                 {activeId === id && (
-                                    <div className="w-5 h-5 flex-[1_0_auto]">
+                                    <div className="h-5 w-5 flex-[1_0_auto]">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 24 24"

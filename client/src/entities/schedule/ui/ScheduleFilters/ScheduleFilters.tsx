@@ -47,8 +47,8 @@ export const ScheduleFilters = (props: ScheduleFiltersProps) => {
     );
 
     return (
-        <div className="p-5 pt-0 max-w-64 top-0 flex-[1_0_auto] sticky h-fit">
-            <h1 className="text-xl pb-3 font-bold">Фильтры</h1>
+        <div className="sticky top-0 h-fit max-w-64 flex-[1_0_auto] p-5 pt-0">
+            <h1 className="pb-3 text-xl font-bold">Фильтры</h1>
 
             <div className="flex flex-col gap-2">
                 <Autocomplete

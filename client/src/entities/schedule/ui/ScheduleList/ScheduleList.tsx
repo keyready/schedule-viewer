@@ -65,7 +65,7 @@ export const ScheduleList = ({ schedule, lectern, classroom }: ScheduleListProps
     }, []);
 
     return (
-        <div className="w-full flex flex-col gap-10">
+        <div className="flex w-full flex-col gap-10">
             {Object.entries(schedule)
                 .reverse()
                 .map(([course, days], courseIndex) => (

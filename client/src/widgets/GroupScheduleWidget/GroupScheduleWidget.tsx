@@ -22,7 +22,7 @@ export const GroupScheduleWidget = ({ groupName }: { groupName: string }) => {
 
     return (
         <AnchorProvider ids={ids}>
-            <div className="flex flex-col gap-10">
+            <div className="flex w-3/4 flex-col gap-10">
                 {groupByWeeks(schedule || []).map((week, weekIndex) => {
                     if (!week.length) return null;
                     const startId = new Date(week[0].date).toLocaleDateString('ru-RU');

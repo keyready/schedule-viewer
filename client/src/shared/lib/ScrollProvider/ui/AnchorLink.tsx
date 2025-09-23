@@ -21,7 +21,7 @@ export const AnchorLink = ({ to, children, className }: AnchorLinkProps) => {
         <button
             type="button"
             onClick={handleClick}
-            className={cn('focus:outline-none self-start cursor-pointer text-left', className)}
+            className={cn('cursor-pointer self-start text-left focus:outline-none', className)}
         >
             {children}
         </button>

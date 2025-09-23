@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
 
 interface AnimatedCourseTitleProps {
     course: string;
     courseIndex: number;
-    renderCourseSmile: (course: string) => React.ReactNode;
+    renderCourseSmile: (course: string) => ReactNode;
 }
 
 export const AnimatedCourseTitle = ({
@@ -12,7 +13,7 @@ export const AnimatedCourseTitle = ({
     renderCourseSmile,
 }: AnimatedCourseTitleProps) => (
     <motion.h3
-        className="text-3xl flex items-center gap-4 font-semibold mb-2"
+        className="mb-2 flex items-center gap-4 text-3xl font-semibold"
         initial={{ opacity: 0, x: -20 }}
         animate={{
             opacity: 1,

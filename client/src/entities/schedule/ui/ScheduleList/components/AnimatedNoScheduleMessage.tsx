@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 export const AnimatedNoScheduleMessage = () => (
     <motion.div
         key="no-schedule"
-        className="col-span-3 ml-10 text-red-800 text-xl"
+        className="col-span-3 ml-10 text-xl text-red-800"
         initial={{ opacity: 0, y: 20 }}
         animate={{
             opacity: 1,

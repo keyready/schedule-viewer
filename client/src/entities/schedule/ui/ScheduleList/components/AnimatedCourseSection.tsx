@@ -48,7 +48,7 @@ export const AnimatedCourseSection = ({
             renderCourseSmile={renderCourseSmile}
         />
 
-        <div className="w-full grid grid-cols-3 gap-3">
+        <div className="grid w-full grid-cols-3 gap-3">
             <AnimatePresence mode="wait">
                 {filteredGroups.length ? (
                     filteredGroups.map((day, index) => (
