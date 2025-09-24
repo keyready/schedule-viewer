@@ -28,8 +28,8 @@ export const GroupScheduleWidget = ({ groupName }: { groupName: string }) => {
                     const startId = new Date(week[0].date).toLocaleDateString('ru-RU');
                     return (
                         <div id={startId} key={weekIndex} className="grid grid-cols-3 gap-3">
-                            {week.map((day, index) => (
-                                <DayScheduleCard groupView day={day} key={index} />
+                            {week.map((day) => (
+                                <DayScheduleCard key={crypto.randomUUID()} groupView day={day} />
                             ))}
                         </div>
                     );

@@ -7,6 +7,7 @@
 
 @theme {
     --color-nav: #0A2C5C;
+    --color-grad-start: #FFF9E7;
 }
 
 ::-webkit-scrollbar {

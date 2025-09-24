@@ -1,6 +1,5 @@
 'use client';
 
-import { Accordion, AccordionItem } from '@heroui/accordion';
 import { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@heroui/theme';
@@ -9,6 +8,7 @@ import type { ScheduleDay, ScheduleGroupDay } from '../../model/types/schedule';
 import { useSubjects } from '@/entities/subject';
 import { DISABLED_DAY_TYPES } from '../../model/consts/daytypes';
 import { Subject } from '@/entities/subject/model/types/subject';
+import { CardModal } from '@/shared/ui/CardModal';
 
 interface DayScheduleCardProps {
     day: ScheduleGroupDay;
@@ -144,56 +144,99 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
     return (
         <div
             id={new Date(day.date).toLocaleDateString('ru-RU')}
-            className="flex h-fit w-full flex-col items-center rounded-lg bg-blue-900/20 p-3"
+            className={cn(
+                'flex h-fit w-full flex-col items-center',
+                'outline-nav rounded-lg p-3 outline outline-2',
+                groupView &&
+                    new Date().toLocaleDateString('ru-RU') ===
+                        new Date(day.date).toLocaleDateString('ru-RU')
+                    ? 'bg-grad-start'
+                    : '',
+            )}
         >
             {renderCardTitle}
 
-            <Accordion variant="bordered" isCompact className="mt-4 h-fit w-full">
+            <div className="mt-4 flex h-fit w-full flex-col">
+                <div className="flex w-full justify-between text-sm italic opacity-30">
+                    <span>Дисциплина</span>
+                    <span>Аудитория</span>
+                </div>
                 {dayData.map((item, index) => {
                     const subject = subjectMap.get(item.title.toUpperCase());
                     const isDisabled = isCellDisabled(item.type, item.title);
 
                     const lessonType = item.type.split('/')[0] === 'П' ? 'Практика' : 'Лекция';
-                    const group = item.type.split('/')[1] || '';
+                    const group = (item.type.split('/')[1] || '')
+                        .replace('.', '')
+                        .replace('Т', 'тема ');
 
                     return (
-                        <AccordionItem
+                        <div
                             key={index}
-                            isDisabled={isDisabled}
-                            aria-label={item.title || item.type}
-                            title={
-                                <div className="flex w-full justify-between text-sm">
-                                    <span>{(item.title || item.type).toUpperCase()}</span>
-                                    <span>{item.classroom}</span>
-                                </div>
-                            }
+                            className={cn(
+                                'border-nav border-b-1 px-1.5 py-1.5 duration-100',
+                                isDisabled ? '' : 'hover:bg-nav/10',
+                                'last:border-none',
+                            )}
                         >
-                            <div className="flex flex-col px-2 py-2">
-                                <h2 className="text-center text-sm leading-none">
-                                    {subject?.title?.toUpperCase() || 'Неизвестный предмет'}
-                                </h2>
+                            <CardModal
+                                key={index}
+                                isDisabled={isDisabled}
+                                cardClassName="w-full"
+                                id={crypto.randomUUID()}
+                                altContent={
+                                    <div className="flex flex-col items-center px-2">
+                                        <h2 className="w-2/3 text-center leading-none font-bold">
+                                            {subject?.title?.toUpperCase() || 'Неизвестный предмет'}
+                                        </h2>
 
-                                <div className="mt-2 flex justify-between text-xs">
-                                    <span>{lessonType}</span>
-                                    <span>{group || '—'}</span>
-                                </div>
+                                        <div className="mt-2 flex w-full justify-between">
+                                            <span>{lessonType}</span>
+                                            <span>{group || '—'}</span>
+                                        </div>
 
-                                <div className="mt-1 flex justify-between gap-3 text-xs">
-                                    <span>Преподаватель</span>
-                                    <span className="truncate">
-                                        {subject?.trainer?.split('; ')[0] || '—'}
-                                    </span>
-                                </div>
+                                        <div className="mt-1 flex w-full justify-between gap-3">
+                                            <span>Преподаватель</span>
+                                            <span className="truncate">
+                                                {subject?.trainer?.split('; ')[0] || '—'}
+                                            </span>
+                                        </div>
 
-                                <div className="mt-1 flex justify-between text-xs">
-                                    <span>Кафедра</span>
-                                    <span>{subject?.lectern || '—'}</span>
+                                        <div className="mt-1 flex w-full justify-between">
+                                            <span>Кафедра</span>
+                                            <span>{subject?.lectern || '—'}</span>
+                                        </div>
+                                    </div>
+                                }
+                            >
+                                <div
+                                    className={cn(
+                                        'flex w-full justify-between text-sm',
+                                        isDisabled && 'opacity-60',
+                                    )}
+                                >
+                                    <span>{(item.title || item.type).toUpperCase()}</span>
+                                    <div className="flex gap-2">
+                                        <span>{item.classroom}</span>
+                                        {!isDisabled && (
+                                            <div className="h-5 w-5">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                    fill="currentColor"
+                                                >
+                                                    {/* eslint-disable-next-line max-len */}
+                                                    <path d="M12 10.0858L7.20711 5.29291L5.79289 6.70712L12 12.9142L18.2071 6.70712L16.7929 5.29291L12 10.0858ZM18 17L6 17L6 15L18 15V17Z"></path>
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        </AccordionItem>
+                            </CardModal>
+                        </div>
                     );
                 })}
-            </Accordion>
+            </div>
         </div>
     );
 };
