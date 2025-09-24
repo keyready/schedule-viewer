@@ -3,3 +3,8 @@ export interface Classroom {
     title: string;
     kafTitle: string;
 }
+
+export interface CreateClassroomAPI {
+    audsTitles?: string[];
+    parentKafId?: string;
+}

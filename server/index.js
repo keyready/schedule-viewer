@@ -30,7 +30,7 @@ const start = async () => {
 };
 
 // удаление кафдеры с ее аудиториями или удаление аудитории
-app.delete('/api/delete', async (req, res) => {
+app.post('/api/delete', async (req, res) => {
     try {
         const { audId, kafId } = req.body;
 
@@ -50,13 +50,13 @@ app.delete('/api/delete', async (req, res) => {
 
             await KafsModel.deleteOne({ _id: kafId });
 
-            return res.status(200).json({ message: 'Кафедра удалена' });
+            return res.status(200).json({ ok: true, message: 'Кафедра удалена' });
         }
 
-        return res.status(400).json({ message: 'Не передан audId или kafId' });
+        return res.status(400).json({ ok: false, message: 'Не передан audId или kafId' });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
+        return res.status(500).json({ ok: false, message: 'Произошла непредвиденная ошибка' });
     }
 });
 
@@ -69,7 +69,7 @@ app.post('/api/create_kaf', async (req, res) => {
             title,
         });
 
-        return res.status(201).json(createdKaf);
+        return res.status(201).json({ok: true});
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
@@ -89,10 +89,10 @@ app.post('/api/add_auds_to_kaf', async (req, res) => {
 
         await KafsModel.updateOne({ _id: parentKafId }, { audsIds: createdAudsIds });
 
-        return res.status(201).json({ message: 'Аудитории созданы и добавлены' });
+        return res.status(201).json({ ok: true, message: 'Аудитории созданы и добавлены' });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: 'Произошла непредвиденная ошибка' });
+        return res.status(500).json({ ok: false, message: 'Произошла непредвиденная ошибка' });
     }
 });
 

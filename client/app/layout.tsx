@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import NextTopLoader from 'nextjs-toploader';
 import { HeroUIProvider, QueryProvider } from '@/app/providers';
 import { Navbar } from '@/shared/ui/Navbar';
+import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
 const unbounded = localFont({
@@ -30,6 +31,7 @@ export default function RootLayout({
                     <HeroUIProvider>
                         <Navbar />
                         <NextTopLoader color="#c7d5e3" />
+                        <Toaster />
                         {children}
                     </HeroUIProvider>
                 </QueryProvider>
