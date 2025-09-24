@@ -6,4 +6,5 @@ export const classroomApi = {
         const response = await apiClient.get('/api/fetch_auds');
         return response.data;
     },
+    addClassrooms: async () => {},
 };

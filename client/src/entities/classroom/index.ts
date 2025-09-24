@@ -1,3 +1,5 @@
 export type { Classroom } from './model/types/classroom';
+export { useClassrooms, classroomsKeys } from './model/api/classroomsApi';
+export { classroomApi } from './model/api/classroom';
 
-export { useClassrooms } from './model/api/classroomsApi';
+export { ClassroomsList } from './ui/ClassroomsList';

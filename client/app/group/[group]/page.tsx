@@ -2,6 +2,7 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import { groupScheduleKeys, scheduleApi, WeekFilterBlock } from '@/entities/schedule';
 import { GroupScheduleWidget } from '@/widgets/GroupScheduleWidget';
 import { MovablePageTitle } from '@/shared/ui/MovablePageTitle';
+import { Page } from '@/shared/ui/Page';
 
 interface GroupSchedulePageProps {
     params: Promise<{ group: string }>;
@@ -11,14 +12,13 @@ export default async function GroupSchedulePage({ params }: GroupSchedulePagePro
     const { group } = await params;
 
     const queryClient = new QueryClient();
-
     await queryClient.prefetchQuery({
         queryKey: groupScheduleKeys.currentDay({ groupName: group }),
         queryFn: () => scheduleApi.getSelectedGroup({ groupName: group }),
     });
 
     return (
-        <div className="flex h-[calc(100vh_-_60px)] flex-col gap-6 overflow-y-auto px-10">
+        <Page className="flex-col gap-6">
             <MovablePageTitle>Расписание для {group.replace('-', '/')} уч. гр.</MovablePageTitle>
 
             <HydrationBoundary state={dehydrate(queryClient)}>
@@ -27,6 +27,6 @@ export default async function GroupSchedulePage({ params }: GroupSchedulePagePro
                     <GroupScheduleWidget groupName={group} />
                 </div>
             </HydrationBoundary>
-        </div>
+        </Page>
     );
 }
