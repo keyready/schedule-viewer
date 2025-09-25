@@ -1,15 +1,25 @@
-FROM node:23.10-alpine
+FROM node:20-alpine AS builder
 
-WORKDIR /server
+WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production || npm ci
+RUN npm install
 
 COPY . .
 
-ENV NODE_ENV=production \
-    PORT=5000
+RUN npm run build
 
-EXPOSE 5000
+FROM node:20-alpine
 
-CMD ["node", "index.js"]
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/files ./files
+COPY package*.json ./
+
+ENV NODE_ENV production
+
+EXPOSE 3000
+
+CMD ["node", "dist/main"]
