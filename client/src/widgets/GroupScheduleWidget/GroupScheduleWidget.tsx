@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { DayScheduleCard, useGroupScheduleApi } from '@/entities/schedule';
-import { groupByWeeks } from '@/shared/lib';
+import { generateSafeId, groupByWeeks } from '@/shared/lib';
 import { AnchorProvider } from '@/shared/lib/ScrollProvider';
 
 export const GroupScheduleWidget = ({ groupName }: { groupName: string }) => {
@@ -29,7 +29,7 @@ export const GroupScheduleWidget = ({ groupName }: { groupName: string }) => {
                     return (
                         <div id={startId} key={weekIndex} className="grid grid-cols-3 gap-3">
                             {week.map((day) => (
-                                <DayScheduleCard key={crypto.randomUUID()} groupView day={day} />
+                                <DayScheduleCard key={generateSafeId('day')} groupView day={day} />
                             ))}
                         </div>
                     );

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
-import { Page } from '@/shared/ui/Page';
+import { Page } from '@/shared/UI/Page';
 
 export default async function SettingsLayout({ children }: { children: ReactNode }) {
     return (

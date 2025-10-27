@@ -1,6 +1,8 @@
 import { lecternApi, LecternsList } from '@/entities/lectern';
 import { classroomApi } from '@/entities/classroom';
 
+export const dynamic = 'force-dynamic';
+
 export default async function LecternsSettingsPage() {
     const lecterns = await lecternApi.getLecterns();
     const classrooms = await classroomApi.getClassrooms();

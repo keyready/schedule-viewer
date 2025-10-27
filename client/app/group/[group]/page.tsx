@@ -1,8 +1,8 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { groupScheduleKeys, scheduleApi, WeekFilterBlock } from '@/entities/schedule';
 import { GroupScheduleWidget } from '@/widgets/GroupScheduleWidget';
-import { MovablePageTitle } from '@/shared/ui/MovablePageTitle';
-import { Page } from '@/shared/ui/Page';
+import { MovablePageTitle } from '@/shared/UI/MovablePageTitle';
+import { Page } from '@/shared/UI/Page';
 
 interface GroupSchedulePageProps {
     params: Promise<{ group: string }>;

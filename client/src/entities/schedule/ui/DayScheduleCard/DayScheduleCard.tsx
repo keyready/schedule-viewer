@@ -5,10 +5,11 @@ import { motion } from 'framer-motion';
 import { cn } from '@heroui/theme';
 import Link from 'next/link';
 import type { ScheduleDay, ScheduleGroupDay } from '../../model/types/schedule';
-import { useSubjects } from '@/entities/subject';
+import { useSubjects } from '@/entities/Subject';
 import { DISABLED_DAY_TYPES } from '../../model/consts/daytypes';
-import { Subject } from '@/entities/subject/model/types/subject';
-import { CardModal } from '@/shared/ui/CardModal';
+import { Subject } from '@/entities/Subject/model/types/Subject';
+import { CardModal } from '@/shared/UI/CardModal';
+import { generateSafeId } from '@/shared/lib';
 
 interface DayScheduleCardProps {
     day: ScheduleGroupDay;
@@ -183,7 +184,7 @@ export const DayScheduleCard = ({ day, groupView = false }: DayScheduleCardProps
                                 key={index}
                                 isDisabled={isDisabled}
                                 cardClassName="w-full"
-                                id={crypto.randomUUID()}
+                                id={generateSafeId('card')}
                                 altContent={
                                     <div className="flex flex-col items-center px-2">
                                         <h2 className="w-2/3 text-center leading-none font-bold">

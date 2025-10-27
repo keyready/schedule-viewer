@@ -1,5 +1,5 @@
 import { CommonScheduleWidget } from '../src/widgets/CommonScheduleWidget';
-import { Page } from '@/shared/ui/Page';
+import { Page } from '@/shared/UI/Page';
 
 export default function CommonSchedulePreview() {
     return (
