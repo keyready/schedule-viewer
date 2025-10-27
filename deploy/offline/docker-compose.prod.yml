@@ -1,10 +1,10 @@
 services:
   mongo:
-    image: ${MONGO_IMAGE:-mongo:7}
+    image: mongo:7
     container_name: schedule-mongo
     restart: unless-stopped
     ports:
-      - "${MONGODB_PORT:-27017}:27017"
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -21,7 +21,7 @@ services:
       mongo:
         condition: service_healthy
     volumes:
-      - ./server/backup/dump:/dump
+      - ../../server/backup/dump:/dump:ro
       - mongo_data:/data/db
     command: >
       bash -c "
@@ -42,13 +42,12 @@ services:
     restart: "no"
 
   server:
-    build:
-      context: ./server
+    image: schedule-viewer-server:prod
     container_name: schedule-server
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - PORT=${SERVER_PORT:-6000}
+      - PORT=6000
       - MONGODB_URI=mongodb://mongo:27017/schedule-viewer
       - FILES_DIR=/app/files/
     depends_on:
@@ -56,24 +55,24 @@ services:
         condition: service_healthy
       mongo-init:
         condition: service_completed_successfully
-    volumes:
-      - ./server/files:/app/files:ro
+    # For fully self-contained image, do NOT mount files.
+    # To override schedule files from host, uncomment the volume below:
+    # volumes:
+    #   - ../../server/files:/app/files:ro
     ports:
-      - "${SERVER_PORT:-6000}:6000"
+      - "6000:6000"
 
   client:
-    build:
-      context: ./client
+    image: schedule-viewer-client:prod
     container_name: schedule-client
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      # leave NEXT_PUBLIC_API_URL unset to use relative requests in browser
     depends_on:
       server:
         condition: service_started
     ports:
-      - "${CLIENT_PORT:-2000}:2000"
+      - "2000:2000"
 
 volumes:
   mongo_data:
