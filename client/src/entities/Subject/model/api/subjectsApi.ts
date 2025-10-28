@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import type { Subject, SubjectApiParams } from '../types/subject';
+import type { Subject, SubjectApiParams } from '../types/Subject';
 import { subjectApi } from './subject';
 
 export const subjectKeys = {

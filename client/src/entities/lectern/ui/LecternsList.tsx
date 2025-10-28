@@ -4,6 +4,7 @@ import { Lectern } from '../model/types/lectern';
 import { Classroom } from '@/entities/classroom';
 import { LecternBlock } from '@/entities/lectern/ui/LecternBlock';
 import { CreateLecternModal } from '@/entities/lectern/ui/CreateLecternModal';
+import { generateSafeId } from '@/shared/lib';
 
 export const LecternsList = (props: { lecterns: Lectern[]; classrooms: Classroom[] }) => {
     const { lecterns, classrooms } = props;
@@ -22,7 +23,7 @@ export const LecternsList = (props: { lecterns: Lectern[]; classrooms: Classroom
                     <LecternBlock
                         classrooms={classrooms}
                         lectern={lectern}
-                        key={crypto.randomUUID()}
+                        key={generateSafeId('lectern')}
                     />
                 ))}
             </div>

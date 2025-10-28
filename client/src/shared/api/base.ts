@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const defaultBaseUrl = typeof window === 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || 'http://server:6000') : '';
+
 export const apiClient = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || defaultBaseUrl,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',

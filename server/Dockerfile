@@ -20,6 +20,6 @@ COPY package*.json ./
 
 ENV NODE_ENV production
 
-EXPOSE 3000
+EXPOSE 6000
 
 CMD ["node", "dist/main"]

@@ -1,5 +1,5 @@
 import { apiClient } from '@/shared/api';
-import type { Subject, SubjectApiParams } from '../types/subject';
+import type { Subject, SubjectApiParams } from '../types/Subject';
 
 export const subjectApi = {
     getGroupSubjects: async (params: SubjectApiParams): Promise<Subject[]> => {

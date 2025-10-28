@@ -5,6 +5,7 @@ import { Classroom } from '@/entities/classroom';
 import { Lectern } from '../model/types/lectern';
 import { lecternApi } from '@/entities/lectern';
 import { toast } from 'react-hot-toast';
+import { generateSafeId } from '@/shared/lib';
 
 export const LecternBlock = (props: { classrooms: Classroom[]; lectern: Lectern }) => {
     const { lectern, classrooms } = props;
@@ -37,7 +38,7 @@ export const LecternBlock = (props: { classrooms: Classroom[]; lectern: Lectern 
                 <div className="mt-3 flex flex-col">
                     <p className="text-sm underline">Аудитории:</p>
                     {filteredClassrooms.map((cr) => (
-                        <span key={crypto.randomUUID()} className="text-xs">
+                        <span key={generateSafeId('classroom')} className="text-xs">
                             {cr.title}
                         </span>
                     ))}

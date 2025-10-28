@@ -1,12 +1,12 @@
 services:
   mongo:
-    image: mongo:latest
+    image: mongo:7
     container_name: schedule-mongo
     restart: unless-stopped
-    volumes:
-      - mongo_data:/data/db
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -15,54 +15,69 @@ services:
       start_period: 40s
 
   mongo-init:
-    image: mongo:latest
+    image: mongo:7
     container_name: schedule-mongo-init
     depends_on:
       mongo:
         condition: service_healthy
     volumes:
-      - ./backup/dump:/dump
+      - ../../server/backup/dump:/dump:ro
       - mongo_data:/data/db
-    # mongodump --host localhost:27017 --db schedule-viewer --out ./backup/dump
     command: >
       bash -c "
-        echo 'Ожидание готовности MongoDB...' &&
+        echo 'Waiting for MongoDB...' &&
         until mongosh --host mongo:27017 --eval \"db.adminCommand('ping')\" > /dev/null 2>&1; do
           sleep 5;
-          echo '... ждём MongoDB ...';
+          echo '... waiting for MongoDB ...';
         done;
-        echo 'MongoDB готов. Начинаем восстановление...';
+        echo 'MongoDB ready. Starting restore...';
         if [ -d /dump/schedule-viewer ]; then
           mongorestore --host mongo:27017 --db schedule-viewer /dump/schedule-viewer;
-          echo 'Восстановление завершено.';
+          echo 'Restore done.';
         else
-          echo 'Бэкап не найден: /dump/schedule-viewer. Пропускаем восстановление.';
+          echo 'Backup not found: /dump/schedule-viewer. Skipping restore.';
         fi;
-        echo 'mongo-init завершил работу.';
+        echo 'mongo-init finished.';
       "
     restart: "no"
 
   server:
-    build:
-      context: .
+    image: schedule-viewer-server:prod
     container_name: schedule-server
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - PORT=6000
       - MONGODB_URI=mongodb://mongo:27017/schedule-viewer
-      - FILES_DIR=/server/files/
+      - FILES_DIR=/app/files/
     depends_on:
       mongo:
         condition: service_healthy
       mongo-init:
         condition: service_completed_successfully
-    volumes:
-      - ./files:/server/files:ro
-    expose:
-      - "6000"
+    # For fully self-contained image, do NOT mount files.
+    # To override schedule files from host, uncomment the volume below:
+    # volumes:
+    #   - ../../server/files:/app/files:ro
     ports:
       - "6000:6000"
 
+  client:
+    image: schedule-viewer-client:prod
+    container_name: schedule-client
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      server:
+        condition: service_started
+    ports:
+      - "2000:2000"
+
 volumes:
   mongo_data:
+
+networks:
+  default:
+    name: schedule-network
+

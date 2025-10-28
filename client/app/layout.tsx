@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
 import NextTopLoader from 'nextjs-toploader';
 import { HeroUIProvider, QueryProvider } from '@/app/providers';
-import { Navbar } from '@/shared/ui/Navbar';
+import { Navbar } from '@/shared/UI/Navbar';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
