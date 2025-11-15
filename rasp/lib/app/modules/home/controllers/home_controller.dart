@@ -71,7 +71,7 @@ class HomeController extends GetxController {
   Future<void> _loadThemePreference() async {
     try {
       final box = await Hive.openBox('settings');
-      final isDark = box.get('isDarkMode') as bool? ?? false;
+      final isDark = box.get('isDarkMode') as bool? ?? true;
       isDarkMode.value = isDark;
     } catch (e) {
       // Игнорируем ошибки

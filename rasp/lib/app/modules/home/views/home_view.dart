@@ -18,7 +18,7 @@ class HomeView extends GetView<HomeController> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Расписание занятий'),
+        title: isMobile ? const SizedBox.shrink() : const Text('Расписание занятий'),
         // На мобильных добавляем кнопку для открытия фильтров
         leading: isMobile
             ? Builder(

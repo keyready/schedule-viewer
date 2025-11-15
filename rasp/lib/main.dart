@@ -10,11 +10,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheService.init();
   
-  // Загружаем настройки темы
-  bool isDarkMode = false;
+  // Загружаем настройки темы (по умолчанию темная тема)
+  bool isDarkMode = true;
   try {
     final box = await Hive.openBox('settings');
-    isDarkMode = box.get('isDarkMode') as bool? ?? false;
+    isDarkMode = box.get('isDarkMode') as bool? ?? true;
   } catch (e) {
     // Игнорируем ошибки
   }

@@ -14,7 +14,9 @@ class DateNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateTime.now();
     final difference = _getDaysDifference(today, selectedDate);
-    final dayLabel = _getDayLabel(difference);
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    // Для мобильных не показываем "вчера, сегодня, завтра"
+    final dayLabel = isMobile ? null : _getDayLabel(difference);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(

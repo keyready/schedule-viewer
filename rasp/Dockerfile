@@ -8,8 +8,8 @@ RUN flutter pub get
 
 COPY . .
 
-# Собираем Flutter Web приложение
-RUN flutter build web --release
+# Очищаем кеш и собираем Flutter Web приложение
+RUN flutter clean && flutter pub get && flutter build web --release
 
 # Этап 2: Обслуживание через nginx
 FROM nginx:alpine
