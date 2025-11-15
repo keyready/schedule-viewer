@@ -61,19 +61,17 @@ services:
     ports:
       - "${SERVER_PORT:-6000}:6000"
 
-  client:
+  schedule-web:
     build:
-      context: ./client
-    container_name: schedule-client
+      context: ./rasp
+      dockerfile: Dockerfile
+    container_name: schedule_web
     restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      # leave NEXT_PUBLIC_API_URL unset to use relative requests in browser
     depends_on:
       server:
         condition: service_started
     ports:
-      - "${CLIENT_PORT:-2000}:2000"
+      - "${CLIENT_PORT:-2001}:2001"
 
 volumes:
   mongo_data:
