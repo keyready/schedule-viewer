@@ -3,8 +3,9 @@ services:
     image: ${MONGO_IMAGE:-mongo:7}
     container_name: schedule-mongo
     restart: unless-stopped
-    ports:
-      - "${MONGODB_PORT:-27017}:27017"
+    # Порт не экспонируется наружу, доступен только внутри Docker сети
+    expose:
+      - "27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -58,8 +59,10 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./server/files:/app/files:ro
-    ports:
-      - "${SERVER_PORT:-6000}:6000"
+    # Порт не экспонируется наружу, доступен только внутри Docker сети
+    # Flutter клиент будет обращаться через nginx прокси
+    expose:
+      - "6000"
 
   schedule-web:
     build:
