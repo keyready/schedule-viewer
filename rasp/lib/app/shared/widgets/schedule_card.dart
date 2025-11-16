@@ -484,7 +484,7 @@ class _LessonDetailsDialog extends StatelessWidget {
                         const SizedBox(height: 16),
                         _DetailRow(
                           icon: Icons.groups,
-                          label: 'Группа',
+                          label: 'Тема',
                           value: group,
                           colorScheme: colorScheme,
                         ),
