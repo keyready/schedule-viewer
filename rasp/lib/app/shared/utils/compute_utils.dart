@@ -87,7 +87,7 @@ List<Map<String, dynamic>> _filterSchedule(FilterParams params) {
         final groupNum = day.groupName!.split('-').first;
         if (groupNum.length >= 3) {
           final lecternDigit = groupNum[2];
-          final lecternNum = int.parse('6$lecternDigit');
+          final lecternNum = int.parse('$lecternDigit');
           return kafTitle.contains(lecternNum.toString());
         }
       } catch (e) {

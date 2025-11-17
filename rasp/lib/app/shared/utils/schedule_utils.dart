@@ -52,7 +52,7 @@ int calculateCourse(String groupNumber) {
   final admissionYearDigit = cleaned[1];
   final admissionYear = int.parse('202$admissionYearDigit');
 
-  final course = int.parse('6${currentYear - admissionYear + 1}');
+  final course = int.parse('${currentYear - admissionYear + 1}');
   return course > 0 ? course : 1;
 }
 

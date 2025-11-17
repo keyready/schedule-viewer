@@ -1,1 +1,0 @@
-export { GroupScheduleWidget } from './GroupScheduleWidget';

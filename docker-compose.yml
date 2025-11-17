@@ -59,22 +59,32 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./server/files:/app/files:ro
-    # Порт не экспонируется наружу, доступен только внутри Docker сети
-    # Flutter клиент будет обращаться через nginx прокси
-    expose:
-      - "6000"
+    ports:
+      - "${SERVER_PORT:-6000}:6000"
 
   schedule-web:
     build:
       context: ./rasp
       dockerfile: Dockerfile
-    container_name: schedule_web
+    container_name: schedule-web-2001
     restart: unless-stopped
     depends_on:
       server:
         condition: service_started
     ports:
       - "${CLIENT_PORT:-2001}:2001"
+
+  schedule-web-7772:
+    build:
+      context: ./rasp
+      dockerfile: Dockerfile
+    container_name: schedule-web-7772
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_started
+    ports:
+      - "${CLIENT_PORT:-7772}:2001"
 
 volumes:
   mongo_data:
