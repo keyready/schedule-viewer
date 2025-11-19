@@ -1,24 +1,95 @@
 services:
-  database:
-    container_name: database
-    image: mongo:latest
-    restart: always
-    ports:
-      - "27017:27017"
-    networks:
-      - custom_network
-  server:
-    container_name: server
-    build: ./server
-    restart: always
-    ports:
-      - "5000:5000"
-    networks:
-      - custom_network
+  mongo:
+    image: ${MONGO_IMAGE:-mongo:7}
+    container_name: schedule-mongo
+    restart: unless-stopped
+    # Порт не экспонируется наружу, доступен только внутри Docker сети
+    expose:
+      - "27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  mongo-init:
+    image: mongo:7
+    container_name: schedule-mongo-init
     depends_on:
-      - database
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./server/backup/dump:/dump
+      - mongo_data:/data/db
+    command: >
+      bash -c "
+        echo 'Waiting for MongoDB...' &&
+        until mongosh --host mongo:27017 --eval \"db.adminCommand('ping')\" > /dev/null 2>&1; do
+          sleep 5;
+          echo '... waiting for MongoDB ...';
+        done;
+        echo 'MongoDB ready. Starting restore...';
+        if [ -d /dump/schedule-viewer ]; then
+          mongorestore --host mongo:27017 --db schedule-viewer /dump/schedule-viewer;
+          echo 'Restore done.';
+        else
+          echo 'Backup not found: /dump/schedule-viewer. Skipping restore.';
+        fi;
+        echo 'mongo-init finished.';
+      "
+    restart: "no"
+
+  server:
+    build:
+      context: ./server
+    container_name: schedule-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=${SERVER_PORT:-6000}
+      - MONGODB_URI=mongodb://mongo:27017/schedule-viewer
+      - FILES_DIR=/app/files/
+    depends_on:
+      mongo:
+        condition: service_healthy
+      mongo-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./server/files:/app/files:ro
+    ports:
+      - "${SERVER_PORT:-6000}:6000"
+
+  schedule-web:
+    build:
+      context: ./rasp
+      dockerfile: Dockerfile
+    container_name: schedule-web-2001
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_started
+    ports:
+      - "${CLIENT_PORT:-2001}:2001"
+
+  schedule-web-7772:
+    build:
+      context: ./rasp
+      dockerfile: Dockerfile
+    container_name: schedule-web-7772
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_started
+    ports:
+      - "${CLIENT_PORT:-7772}:2001"
+
+volumes:
+  mongo_data:
 
 networks:
-  custom_network:
-    driver: bridge
-    name: custom_network
+  default:
+    name: schedule-network
+
